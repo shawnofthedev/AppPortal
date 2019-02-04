@@ -1,0 +1,171 @@
+﻿@model AppPortal.ViewModels.FundingRequestViewModel
+
+@{
+    ViewData["Title"] = "Vendor";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h3>Funding Request</h3>
+
+<hr />
+
+@*<h4 style="color:red">@TempData["ErrorMessage"]</h4>
+<h4 style="color:green">@ViewData["Success"]</h4>*@
+
+<form asp-action="Quotes" method="post" class="form-horizontal"> 
+    
+    <div class="panel panel-default">
+        <div class="panel-heading">Program Information</div>
+        <div class="panel-body"> 
+            <dl class="dl-horizontal">
+                <dt> @Html.DisplayNameFor(model => model.CapFundingRequest.ProgramNum) </dt>
+                <dd> @Html.DisplayFor(model => model.CapFundingRequest.ProgramNum) </dd>
+                <dt> @Html.DisplayNameFor(model => model.CapFundingRequest.DivisionName) </dt>
+                <dd> @Html.DisplayFor(model => model.CapFundingRequest.DivisionName) </dd>
+                <dt> @Html.DisplayNameFor(model => model.CapFundingRequest.ProgramName) </dt>
+                <dd> @Html.DisplayFor(model => model.CapFundingRequest.ProgramName) </dd>
+                <dt> @Html.DisplayNameFor(model => model.CapFundingRequest.DivLead) </dt>
+                <dd> @Html.DisplayFor(model => model.CapFundingRequest.DivLead) </dd>
+                <dt> @Html.DisplayNameFor(model => model.CapFundingRequest.Initiator) </dt>
+                <dd> @Html.DisplayFor(model => model.CapFundingRequest.Initiator) </dd>
+            </dl>
+        </div>
+    </div>
+    
+    <div class="panel panel-default">
+        <div class="panel-heading">Project/Purchase Overview</div> 
+        <div class="panel-body">
+            <dl class="dl-horizontal"> 
+                <dt> @Html.DisplayNameFor(model => model.CapFundingRequest.ProjectName) </dt>
+                <dd> @Html.DisplayFor(model => model.CapFundingRequest.ProjectName) </dd> 
+                <dt> @Html.DisplayNameFor(model => model.CapFundingRequest.ProjectOverview) </dt>
+                <dd> @Html.DisplayFor(model => model.CapFundingRequest.ProjectOverview) </dd> 
+                <dt> @Html.DisplayNameFor(model => model.CapFundingRequest.OneTimePurchase) </dt>
+                @if (Model.CapFundingRequest.OneTimePurchase == true)
+                {
+                    <dd>True</dd>
+                }
+                else
+                { 
+                    <dd>False</dd>
+                }
+                <dt> @Html.DisplayNameFor(model => model.CapFundingRequest.RecurringNeed) </dt>
+                @if (Model.CapFundingRequest.RecurringNeed == true)
+                {
+                    <dd>True</dd>
+                }
+                else
+                { 
+                    <dd>False</dd>
+                }
+                <dt> @Html.DisplayNameFor(model => model.CapFundingRequest.ReplaceAsset) </dt>
+                @if (Model.CapFundingRequest.ReplaceAsset == true)
+                {
+                    <dd>True</dd>
+                } 
+                else
+                { 
+                    <dd>False</dd>
+                }
+                @if (Model.CapFundingRequest.ReplaceAsset == true)
+                {
+                    <dt> @Html.DisplayNameFor(model => model.CapFundingRequest.AssetYear) </dt>
+                    <dd> @Html.DisplayFor(model => model.CapFundingRequest.AssetYear) </dd> 
+                    <dt> @Html.DisplayNameFor(model => model.CapFundingRequest.Make) </dt>
+                    <dd> @Html.DisplayFor(model => model.CapFundingRequest.Make) </dd> 
+                    <dt> @Html.DisplayNameFor(model => model.CapFundingRequest.AssetNum) </dt>
+                    <dd> @Html.DisplayFor(model => model.CapFundingRequest.AssetNum) </dd> 
+                    <dt> @Html.DisplayNameFor(model => model.CapFundingRequest.Serial) </dt>
+                    <dd> @Html.DisplayFor(model => model.CapFundingRequest.Serial) </dd> 
+                    <dt> @Html.DisplayNameFor(model => model.CapFundingRequest.AssetDesc) </dt>
+                    <dd> @Html.DisplayFor(model => model.CapFundingRequest.AssetDesc) </dd> 
+                }
+            </dl> 
+        </div> 
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">Budget Overview</div> 
+        <div class="panel-body">
+            <dl class="dl-horizontal">
+                <dt> @Html.DisplayNameFor(model => model.CapFundingRequest.AmtRequest) </dt>
+                <dd> @Html.DisplayFor(model => model.CapFundingRequest.AmtRequest) </dd> 
+                
+                <dt> @Html.DisplayNameFor(model => model.CapFundingRequest.AmtOtherSource) </dt>
+                <dd> @Html.DisplayFor(model => model.CapFundingRequest.AmtOtherSource) </dd> 
+ 
+                <dt> @Html.DisplayNameFor(model => model.CapFundingRequest.TotalCost) </dt>
+                <dd> @Html.DisplayFor(model => model.CapFundingRequest.TotalCost) </dd> 
+                
+                <dt> @Html.DisplayNameFor(model => model.CapFundingRequest.OtherSourceExplain) </dt>
+                <dd> @Html.DisplayFor(model => model.CapFundingRequest.OtherSourceExplain) </dd> 
+            </dl> 
+             <div class="form-group">
+                 <label class="control-label col-md-2">Files</label>
+                 <div class="col-md-8">
+                     @if (!Model.FundingRequestAttachments.Any())
+                     {
+                         <p class="form-control">No supporting files at this submitted yet</p>
+                     }
+                     else
+                     { 
+                         @foreach (var files in Model.FundingRequestAttachments)
+                         {
+                             <label class="form-control">@Html.DisplayFor(Model => files.FileName)</label>
+                         } 
+                     } 
+                 </div>
+             </div> 
+             <div class="form-group">
+                 <div class="col-md-offset-2 col-md-10"> 
+                     <a class="btn btn-primary" asp-action="SupportingDocuments" asp-route-id="@Model.CapFundingRequest.Id">Manage supporting Documents</a> 
+                 </div>
+             </div>
+        </div> 
+    </div> 
+ 
+    <div class="panel panel-default"> 
+        <div class="panel-heading">Staggering Project Costs</div> 
+        <div class="panel-body"> 
+        @if (!Model.StaggeredCosts.Any())
+        { 
+        <p> 
+            No Project Costs Entered Yet!
+        </p>
+        }
+        else
+        {
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Fiscal Year</th>
+                        <th>Amount</th>
+                        <th>Amt. Justification</th>
+                        <th>Description of Activity</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach (var item in Model.StaggeredCosts)
+                {
+                    <tr>
+                        <td> @Html.DisplayFor(modelItem => item.FiscalYear) </td>
+                        <td> @Html.DisplayFor(modelItem => item.Amount) </td>
+                        <td> @Html.DisplayFor(modelItem => item.AmtJustification) </td>
+                        <td> @Html.DisplayFor(modelItem => item.DescOfActivity) </td>
+                    </tr>
+                }
+                </tbody>
+            </table> 
+        } 
+            <a class="btn btn-primary" asp-action="StaggeredCostForm" asp-route-id="@Model.CapFundingRequest.Id">For Staggered Project Costs</a> 
+        </div> 
+    </div>
+    
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10"> 
+            <br />
+            <a class="btn btn-primary" asp-action="QuotesForm" asp-route-id="@Model.CapFundingRequest.Id">Next</a> 
+        </div>
+    </div>
+ </form>
+

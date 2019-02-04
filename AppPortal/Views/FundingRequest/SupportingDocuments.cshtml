@@ -1,0 +1,93 @@
+﻿@model AppPortal.ViewModels.FundingRequestViewModel
+
+@{
+    ViewData["Title"] = "SupportingDocuments";
+}
+
+<h3>Funding Request</h3>
+
+<hr />
+<form asp-action="FileUpload" method="post" enctype="multipart/form-data" class="form-horizontal"> 
+ 
+    <div class="panel panel-default">
+        <div class="panel-heading">Program Information</div> 
+        <div class="panel-body">
+            <dl class="dl-horizontal"> 
+                <dt> @Html.DisplayNameFor(model => model.CapFundingRequest.ProgramNum) </dt>
+                <dd> @Html.DisplayFor(model => model.CapFundingRequest.ProgramNum) </dd> 
+                <dt> @Html.DisplayNameFor(model => model.CapFundingRequest.DivisionName) </dt>
+                <dd> @Html.DisplayFor(model => model.CapFundingRequest.DivisionName) </dd> 
+                <dt> @Html.DisplayNameFor(model => model.CapFundingRequest.ProgramName) </dt>
+                <dd> @Html.DisplayFor(model => model.CapFundingRequest.ProgramName) </dd> 
+                <dt> @Html.DisplayNameFor(model => model.CapFundingRequest.DivLead) </dt>
+                <dd> @Html.DisplayFor(model => model.CapFundingRequest.DivLead) </dd> 
+                <dt> @Html.DisplayNameFor(model => model.CapFundingRequest.Initiator) </dt>
+                <dd> @Html.DisplayFor(model => model.CapFundingRequest.Initiator) </dd>
+            </dl> 
+        </div> 
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">Optional Attachments</div> 
+        <div class="panel-body"> 
+            @if (!Model.FundingRequestAttachments.Any())
+            {
+                <p>No attachments submitted!</p>
+            }
+            else
+            {
+                <table class="col-md-2">
+                    <thead>
+                        <tr>
+                            <th>File Name </th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.FundingRequestAttachments)
+                        {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.FileName)
+                            </td>
+                            <td>
+                                <a asp-action="DeleteAttachment" asp-route-id="@item.Id">Delete</a>
+                            </td>
+                        </tr>
+                        }
+                    </tbody>
+                </table> 
+            } 
+        </div> 
+    </div>
+   
+    <input asp-for="CapFundingRequest.Id" hidden="hidden" />
+    <input asp-for="CapFundingRequest.ProjectName" hidden="hidden" />
+
+    <div class="panel panel-default">
+        <div class="panel-heading">File Uploads</div> 
+        <div class="panel-body">
+            <div class="form-group">
+                <div class="col-md-3">
+                    <p><strong>Upload one or more pdf files:</strong></p>
+                    <input type="file" name="files" multiple />
+                    <br />
+                </div>
+            </div> 
+            <div class="form-group">
+                <div class="col-md-10">
+                    <input type="submit" value="Upload" />
+                </div>
+            </div>
+        </div> 
+    </div> 
+
+    <div class="form-group"> 
+        <div class="col-md-offset-2 col-md-10"> 
+            <br /> 
+            <a class="btn btn-primary" asp-action="Edit" asp-route-id="@Model.CapFundingRequest.Id">Return To Request Form</a> 
+        </div>
+    </div>
+
+</form>
+

@@ -1,0 +1,201 @@
+﻿@model AppPortal.ViewModels.FundingRequestViewModel
+
+@{
+    ViewData["Title"] = "FundingRequestForm";
+}
+
+<h3>Funding Request</h3>
+
+<hr />
+
+<form asp-action="Save" method="post" enctype="multipart/form-data" class="form-horizontal">
+
+    <div class="panel panel-default">
+        <div class="panel-heading">Program Information</div> 
+        <div class="panel-body">
+            <dl class="dl-horizontal"> 
+                <dt> @Html.DisplayNameFor(model => model.CapFundingRequest.ProgramNum) </dt>
+                <dd> @Html.DisplayFor(model => model.CapFundingRequest.ProgramNum) </dd> 
+                <dt> @Html.DisplayNameFor(model => model.CapFundingRequest.DivisionName) </dt>
+                <dd> @Html.DisplayFor(model => model.CapFundingRequest.DivisionName) </dd> 
+                <dt> @Html.DisplayNameFor(model => model.CapFundingRequest.ProgramName) </dt>
+                <dd> @Html.DisplayFor(model => model.CapFundingRequest.ProgramName) </dd> 
+                <dt> @Html.DisplayNameFor(model => model.CapFundingRequest.DivLead) </dt>
+                <dd> @Html.DisplayFor(model => model.CapFundingRequest.DivLead) </dd> 
+                <dt> @Html.DisplayNameFor(model => model.CapFundingRequest.Initiator) </dt>
+                <dd> @Html.DisplayFor(model => model.CapFundingRequest.Initiator) </dd>
+            </dl> 
+        </div> 
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">Project/Purchase Overview</div>
+        <div class="panel-body">
+            <div class="form-group">
+                <label asp-for="CapFundingRequest.ProgramName" class="control-label col-md-2"></label>
+                <div class="col-md-8">
+                    <input asp-for="CapFundingRequest.ProjectName" class="form-control" />
+                    <span asp-validation-for="CapFundingRequest.ProjectName" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label asp-for="CapFundingRequest.ProjectOverview" class="control-label col-md-2"></label>
+                <div class="col-md-8">
+                    <textarea asp-for="CapFundingRequest.ProjectOverview" class="form-control"> </textarea>
+                    <span asp-validation-for="CapFundingRequest.ProjectOverview" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2">
+                <input type="checkbox" asp-for="CapFundingRequest.OneTimePurchase" />
+                <label asp-for="CapFundingRequest.OneTimePurchase"></label>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2">
+                <input type="checkbox" asp-for="CapFundingRequest.RecurringNeed" />
+                <label asp-for="CapFundingRequest.RecurringNeed"></label>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2">
+                <input type="checkbox" asp-for="CapFundingRequest.ReplaceAsset" />
+                <label asp-for="CapFundingRequest.ReplaceAsset"></label>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="CapFundingRequest.AssetNum" class="control-label col-md-2"></label>
+            <div class="col-md-4">
+                <input asp-for="CapFundingRequest.AssetNum" class="form-control" disabled="disabled" />
+            </div>
+        </div>
+    </div> 
+
+    <div class="panel panel-default">
+        <div class="panel-heading">Budget Overview</div> 
+        <div class="panel-body"> 
+            <div class="form-group">
+                <label asp-for="CapFundingRequest.AmtRequest" class="control-label col-md-2"></label>
+                <div class="col-md-2"> 
+                    <input asp-for="CapFundingRequest.AmtRequest" class="form-control" />
+                    <span asp-validation-for="CapFundingRequest.AmtRequest" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label asp-for="CapFundingRequest.AmtOtherSource" class="control-label col-md-2"></label>
+                <div class="col-md-2"> 
+                    <input asp-for="CapFundingRequest.AmtOtherSource" class="form-control" />
+                    <span asp-validation-for="CapFundingRequest.AmtOtherSource" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label asp-for="CapFundingRequest.OtherSourceExplain" class="control-label col-md-2"></label>
+                <div class="col-md-8"> 
+                    <textarea asp-for="CapFundingRequest.OtherSourceExplain" class="form-control"> </textarea>
+                    <span asp-validation-for="CapFundingRequest.OtherSourceExplain" class="text-danger"></span>
+                </div>
+            </div> 
+            @if (Model.CapFundingRequest.Id != 0)
+            {
+                <div class="form-group">
+                    <label class="control-label col-md-2">Files</label>
+                    <div class="col-md-8">
+                        @if (!Model.FundingRequestAttachments.Any())
+                        {
+                            <p class="form-control">No supporting files at this submitted yet</p>
+                        }
+                        else
+                        { 
+                            @foreach (var files in Model.FundingRequestAttachments)
+                            {
+                                <label class="form-control">@Html.DisplayFor(Model => files.FileName)</label>
+                            } 
+                        } 
+                    </div>
+                </div> 
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10"> 
+                        <a class="btn btn-primary" asp-action="SupportingDocuments" asp-route-id="@Model.CapFundingRequest.Id">Manage supporting Documents</a> 
+                    </div>
+                </div>
+            }
+        </div>
+    </div> 
+
+    <div class="panel panel-default"> 
+        <div class="panel-heading">Staggering Project Costs</div> 
+        <div class="panel-body"> 
+        @if (!Model.StaggeredCosts.Any())
+        { 
+        <p> 
+            No Project Costs Entered Yet!
+        </p>
+        }
+        else
+        {
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Fiscal Year</th>
+                        <th>Amount</th>
+                        <th>Amt. Justification</th>
+                        <th>Description of Activity</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach (var item in Model.StaggeredCosts)
+                {
+                    <tr>
+                        <td> @Html.DisplayFor(modelItem => item.FiscalYear) </td>
+                        <td> @Html.DisplayFor(modelItem => item.Amount) </td>
+                        <td> @Html.DisplayFor(modelItem => item.AmtJustification) </td>
+                        <td> @Html.DisplayFor(modelItem => item.DescOfActivity) </td>
+                    </tr>
+                }
+                </tbody>
+            </table> 
+        } 
+            <a class="btn btn-primary" asp-action="StaggeredCost" asp-route-id="@Model.CapFundingRequest.Id">For Staggered Project Costs</a> 
+        </div> 
+    </div>
+ 
+    <input asp-for="CapFundingRequest.Id" hidden="hidden"/>
+    <input asp-for="CapFundingRequest.ProgramNum" hidden="hidden"/>
+    <input asp-for="CapFundingRequest.DivisionName" hidden="hidden"/>
+    <input asp-for="CapFundingRequest.ProgramName" hidden="hidden"/>
+    <input asp-for="CapFundingRequest.DivLead" hidden="hidden"/>
+    <input asp-for="CapFundingRequest.DivLeadEmail" hidden="hidden"/>
+    <input asp-for="CapFundingRequest.Initiator" hidden="hidden"/>
+    <input asp-for="CapFundingRequest.TimeStamp" hidden="hidden"/>
+    
+    @if (Model.CapFundingRequest.Id == 0)
+    {
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10"> 
+                <br />
+                <input type="submit" value="Next" class="btn btn-primary" /> 
+            </div>
+        </div> 
+    }
+    else
+    {
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10"> 
+                <br />
+                <input type="submit" value="Save" class="btn btn-primary" /> 
+            </div>
+        </div> 
+    }
+
+    <div>
+        <a asp-action="Index">Back to List</a>
+    </div>
+
+</form>
+
+<script>
+    document.getElementById('CapFundingRequest_ReplaceAsset').onchange = function () {
+        document.getElementById('CapFundingRequest_AssetNum').disabled = !this.checked;
+    };
+</script>

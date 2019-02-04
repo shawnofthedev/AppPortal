@@ -1,0 +1,83 @@
+﻿@model AppPortal.Models.LeaveBuyBackRequest
+
+@{
+    ViewData["Title"] = "LeaveBuyBackForm";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<h3>Annual Leave Buy Back Form</h3>
+<hr />
+
+<h4 style="color:red">@TempData["ErrorMessage"]</h4>
+
+<form asp-action="LeaveBuyBackForm" class="form-horizontal">
+
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="form-group"> 
+        <label asp-for="EmpNum" class="control-label col-md-3"></label>
+        <div class="col-md-2"> 
+            <input asp-for="EmpNum" readonly class="form-control"/>
+        </div>
+    </div>
+    <div class="form-group">
+        <label asp-for="EmpName" class="control-label col-md-3"></label> 
+        <div class="col-md-4"> 
+            <input asp-for="EmpName" readonly class="form-control" />
+        </div> 
+    </div>
+
+    <div class="form-group">
+        <label asp-for="PayPeriodEnd" class="control-label col-md-3"></label>
+        @if (User.Identity.Name.Remove(0, 5) == "shawvota"
+           || User.Identity.Name.Remove(0, 5) == "junewalk"
+           || User.Identity.Name.Remove(0, 5) == "devophea"
+           || User.Identity.Name.Remove(0, 5) == "elexarma"
+           || User.Identity.Name.Remove(0, 5) == "SUSIWOLF"
+           || User.Identity.Name.Remove(0, 5) == "angevota")
+        { 
+            <div class="col-md-4">
+                @Html.TextBoxFor(model => model.PayPeriodEnd, "{0: MM/dd/yyyy}", new { @class = "form-control" })
+            </div>
+        }
+        else
+        {
+            <div class="col-md-4">
+                @Html.TextBoxFor(model => model.PayPeriodEnd, "{0: MM/dd/yyyy}", new { @class = "form-control", @readonly = "readonly" })
+            </div>
+        }
+    </div>
+    <div class="form-group">
+        <label asp-for="HoursRequested" class="control-label col-md-3"></label>
+        <div class="col-md-2">
+            <input asp-for="HoursRequested" class="form-control" autofocus="autofocus" /> 
+        </div>
+    </div>
+@*****************************************************************************************
+    Hidden Fields to preserve data for model
+******************************************************************************************@             
+    <input asp-for="RequestBy" hidden="hidden"/>
+    <input asp-for="ProgramNum" hidden="hidden" />
+    <input asp-for="AvailableHours" hidden="hidden" />
+    <input asp-for="RequestDate" hidden="hidden" />
+    <input asp-for="FiscalYear" hidden="hidden" />
+
+    <div class="form-group">
+        <div class="col-md-offset-3 col-md-10"> 
+            <br />
+            <input type="submit" value="Submit" class="btn btn-primary" /> 
+        </div>
+    </div>
+
+</form>
+
+<div class="col-md-offset-3 col-md-10">
+    <a asp-action="LeaveBuyBack">Enter Another Request</a>
+</div>
+
+<script type="text/javascript">
+    document.getElementById('HoursRequested').focus();
+    document.getElementById('HoursRequested').value = "";
+</script>
+

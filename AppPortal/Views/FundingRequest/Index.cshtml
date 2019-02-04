@@ -1,0 +1,48 @@
+﻿@model IEnumerable<AppPortal.Models.CapFundingRequest>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h2>Funding Request</h2>
+
+<p>
+    <a asp-action="New">Create New</a>
+</p>
+@if (!Model.Any())
+{
+    <p>You have no open Funding Request</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th> @Html.DisplayNameFor(model => model.DivisionName) </th>
+                <th> @Html.DisplayNameFor(model => model.ProgramName) </th>
+                <th> @Html.DisplayNameFor(model => model.DivLead) </th>
+                <th> @Html.DisplayNameFor(model => model.ProjectName) </th>
+                <th> @Html.DisplayNameFor(model => model.TotalCost) </th>
+                <th> @Html.DisplayNameFor(model => model.RequestStatus)</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var item in Model) {
+            <tr>
+                <td> @Html.DisplayFor(modelItem => item.DivisionName) </td>
+                <td> @Html.DisplayFor(modelItem => item.ProgramName) </td>
+                <td> @Html.DisplayFor(modelItem => item.DivLead) </td>
+                <td> @Html.DisplayFor(modelItem => item.ProjectName) </td>
+                <td> @Html.DisplayFor(modelItem => item.TotalCost) </td>
+                <td> @Html.DisplayFor(modelItem => item.RequestStatus) </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    @*<a asp-action="Details" asp-route-id="@item.Id">Details</a> |*@
+                    <a asp-action="Withdraw" asp-route-id="@item.Id">Withdraw</a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table> 
+}

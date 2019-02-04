@@ -1,0 +1,19 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h3>Payroll</h3>
+
+<hr />
+
+<div><a asp-area="" asp-controller="Payroll" asp-action="LeaveBuyBack">Submit Annual Leave Buy Back Form</a></div>
+<br />
+
+@if (User.Identity.Name.Remove(0, 5) == "shawvota" || User.Identity.Name.Remove(0, 5) == "junewalk" || 
+     User.Identity.Name.Remove(0, 5) == "DEVOPHEA" || User.Identity.Name.Remove(0, 5) == "alexarma" || 
+     User.Identity.Name.Remove(0, 5) == "SUSIWOLF" || User.Identity.Name.Remove(0, 5) == "angevota")
+{
+   <div><a asp-area="" asp-controller="Payroll" asp-action="BuyBackReport">Leave Buy Back Report</a></div>
+}
