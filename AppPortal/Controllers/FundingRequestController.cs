@@ -263,6 +263,111 @@ namespace AppPortal.Controllers
             return View("FundingRequestForm", viewModel); 
         }
 
+        //public async Task<IActionResult> StaggeredCost(int id)
+        //{ 
+        //    CapFundingRequest requestForm = await _context.CapFundingRequests.SingleOrDefaultAsync(r => r.Id == id);
+ 
+        //    FundingRequestViewModel viewModel = new FundingRequestViewModel
+        //    {
+        //        CapFundingRequest = requestForm,
+        //        StaggeredCosts = _context.StaggeredCosts.Where(s => s.CapfundingRequestId == id).ToList(),
+        //    };
+ 
+        //    return View(viewModel); 
+        //}
+
+        public IActionResult NewCost(int id)
+        {
+            TempData["requestId"] = id;
+            StaggeredCost newCost = new StaggeredCost
+            {
+                CapfundingRequestId = id,
+            };
+            return View("StaggeredCostForm",newCost); 
+        }
+
+        public async Task<IActionResult> EditStagCost(int id)
+        {
+            StaggeredCost staggeredCost = await _context.StaggeredCosts.SingleOrDefaultAsync(s => s.Id == id);
+            TempData["requestId"] = staggeredCost.CapfundingRequestId;
+            if (staggeredCost == null)
+                return NotFound();
+            else
+            { 
+                return View("StaggeredCostForm", staggeredCost);
+            }
+
+        }
+
+        // GET: StaggeredCost/Delete/
+        public async Task<IActionResult> DeleteStagCost(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            StaggeredCost staggeredCost = await _context.StaggeredCosts.SingleOrDefaultAsync(s => s.Id == id);
+
+            if (staggeredCost == null)
+            {
+                return NotFound();
+            }
+
+            return View(staggeredCost); 
+        }
+
+        // POST: StaggeredCost/Delete/
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteStagCost(int id)
+        {
+            StaggeredCost staggeredCost = await _context.StaggeredCosts.FirstOrDefaultAsync(s => s.Id == id);
+            //hold onto the parent request id so we can redirect to the correct form
+            int requestId = staggeredCost.CapfundingRequestId;
+
+            _context.StaggeredCosts.Remove(staggeredCost);
+            await _context.SaveChangesAsync();
+ 
+            return RedirectToAction(nameof(Edit), new { requestId }); 
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SaveCost(StaggeredCost staggeredCost) 
+        {
+            int id = staggeredCost.CapfundingRequestId;
+
+            if (staggeredCost.Id == 0)
+            {
+                StaggeredCost cost = new StaggeredCost
+                {
+                    FiscalYear = staggeredCost.FiscalYear,
+                    Amount = staggeredCost.Amount,
+                    AmtJustification = staggeredCost.AmtJustification,
+                    DescOfActivity = staggeredCost.DescOfActivity,
+                    CapfundingRequestId = staggeredCost.CapfundingRequestId, 
+                };
+                await _context.StaggeredCosts.AddAsync(cost);
+            }
+            else
+            { 
+                {
+                    StaggeredCost costInDb = _context.StaggeredCosts.Single(c => c.Id == staggeredCost.Id);
+
+                    costInDb.FiscalYear = staggeredCost.FiscalYear;
+                    costInDb.Amount = staggeredCost.Amount;
+                    costInDb.AmtJustification = staggeredCost.AmtJustification;
+                    costInDb.DescOfActivity = staggeredCost.DescOfActivity;
+                }
+            }
+            await _context.SaveChangesAsync();
+ 
+            return RedirectToAction(nameof(Edit), new { id }); 
+        } 
+
+
         // GET: CapFundingRequest/Delete/5
         public async Task<IActionResult> Withdraw(int? id)
         {

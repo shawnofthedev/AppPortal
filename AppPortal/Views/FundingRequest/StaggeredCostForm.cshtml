@@ -1,0 +1,47 @@
+﻿@model AppPortal.Models.StaggeredCost
+@{
+    ViewData["Title"] = "NewCost";
+}
+
+<h3>Funding Request</h3>
+
+<hr />
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="SaveCost" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="FiscalYear" class="control-label"></label>
+                <input asp-for="FiscalYear" class="form-control" />
+                <span asp-validation-for="FiscalYear" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Amount" class="control-label"></label>
+                <input asp-for="Amount" class="form-control" />
+                <span asp-validation-for="Amount" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="AmtJustification" class="control-label"></label>
+                <input asp-for="AmtJustification" class="form-control" />
+                <span asp-validation-for="AmtJustification" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DescOfActivity" class="control-label"></label>
+                <input asp-for="DescOfActivity" class="form-control" />
+                <span asp-validation-for="DescOfActivity" class="text-danger"></span>
+            </div>
+
+            <input type="hidden" asp-for="CapfundingRequestId" />
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+            <div> 
+                <a asp-action="Edit" asp-route-id="@TempData["requestId"]">Back To List</a> 
+            </div>
+        </form>
+    </div>
+</div>
+
+
