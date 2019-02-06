@@ -10,6 +10,8 @@
 
 <form asp-action="Save" method="post" enctype="multipart/form-data" class="form-horizontal">
 
+    <h4 style="color:red">@TempData["ErrorMessage"]</h4>
+
     <div class="panel panel-default">
         <div class="panel-heading">Program Information</div> 
         <div class="panel-body">
@@ -32,7 +34,7 @@
         <div class="panel-heading">Project/Purchase Overview</div>
         <div class="panel-body">
             <div class="form-group">
-                <label asp-for="CapFundingRequest.ProgramName" class="control-label col-md-2"></label>
+                <label asp-for="CapFundingRequest.ProjectName" class="control-label col-md-2"></label>
                 <div class="col-md-8">
                     <input asp-for="CapFundingRequest.ProjectName" class="form-control" />
                     <span asp-validation-for="CapFundingRequest.ProjectName" class="text-danger"></span>
@@ -60,14 +62,14 @@
         </div>
         <div class="form-group">
             <div class="col-md-offset-2">
-                <input type="checkbox" asp-for="CapFundingRequest.ReplaceAsset" />
+                <input type="checkbox" id="requestForm_ReplaceAsset" asp-for="CapFundingRequest.ReplaceAsset" />
                 <label asp-for="CapFundingRequest.ReplaceAsset"></label>
             </div>
         </div>
         <div class="form-group">
-            <label asp-for="CapFundingRequest.AssetNum" class="control-label col-md-2"></label>
+            <label id="requestForm_lblAssetNum" asp-for="CapFundingRequest.AssetNum" class="control-label col-md-2" ></label>
             <div class="col-md-4">
-                <input asp-for="CapFundingRequest.AssetNum" class="form-control" disabled="disabled" />
+                <input id="requestForm_AssetNum" asp-for="CapFundingRequest.AssetNum" class="form-control" />
             </div>
         </div>
     </div> 
@@ -96,30 +98,22 @@
                     <span asp-validation-for="CapFundingRequest.OtherSourceExplain" class="text-danger"></span>
                 </div>
             </div> 
-            @if (Model.CapFundingRequest.Id != 0)
-            {
-                <div class="form-group">
-                    <label class="control-label col-md-2">Files</label>
-                    <div class="col-md-8">
-                        @if (!Model.FundingRequestAttachments.Any())
+            <div class="form-group">
+                <label class="control-label col-md-2">Files</label>
+                <div class="col-md-8">
+                    @if (!Model.FundingRequestAttachments.Any())
+                    {
+                        <p class="form-control">No supporting files at this submitted yet</p>
+                    }
+                    else
+                    { 
+                        @foreach (var files in Model.FundingRequestAttachments)
                         {
-                            <p class="form-control">No supporting files at this submitted yet</p>
-                        }
-                        else
-                        { 
-                            @foreach (var files in Model.FundingRequestAttachments)
-                            {
-                                <label class="form-control">@Html.DisplayFor(Model => files.FileName)</label>
-                            } 
+                            <label class="form-control">@Html.DisplayFor(Model => files.FileName)</label>
                         } 
-                    </div>
-                </div> 
-                <div class="form-group">
-                    <div class="col-md-offset-2 col-md-10"> 
-                        <a class="btn btn-primary" asp-action="SupportingDocuments" asp-route-id="@Model.CapFundingRequest.Id">Manage supporting Documents</a> 
-                    </div>
+                    } 
                 </div>
-            }
+            </div> 
         </div>
     </div> 
 
@@ -159,10 +153,7 @@
                 }
                 </tbody>
             </table> 
-        } 
-            <div class="col-md-offset-2 col-md-10"> 
-                <a class="btn btn-primary" asp-action="NewCost" asp-route-id="@Model.CapFundingRequest.Id">Create New</a>
-            </div>
+        }
         </div> 
     </div>
  
@@ -175,33 +166,17 @@
     <input asp-for="CapFundingRequest.Initiator" hidden="hidden"/>
     <input asp-for="CapFundingRequest.TimeStamp" hidden="hidden"/>
     
-    @if (Model.CapFundingRequest.Id == 0)
-    {
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10"> 
-                <br />
-                <input type="submit" value="Next" class="btn btn-primary" /> 
-            </div>
-        </div> 
-    }
-    else
-    {
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10"> 
-                <br />
-                <input type="submit" value="Save" class="btn btn-primary" /> 
-            </div>
-        </div> 
-    }
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10"> 
+            <br /> 
+            <a class="btn btn-primary" asp-action="Details" asp-route-id="@Model.CapFundingRequest.Id">Details</a> 
+            <input type="submit" value="Save" class="btn btn-primary" /> 
+        </div>
+    </div> 
 
     <div>
         <a asp-action="Index">Back to List</a>
     </div>
 
 </form>
-
-<script>
-    document.getElementById('CapFundingRequest_ReplaceAsset').onchange = function () {
-        document.getElementById('CapFundingRequest_AssetNum').disabled = !this.checked;
-    };
-</script>
+ 

@@ -103,7 +103,6 @@ namespace AppPortal.Models
             {
                 entity.Property(e => e.ID).HasColumnName("id"); 
             });
-        }
-
+        } 
     }
 }

@@ -57,13 +57,13 @@ namespace AppPortal.Models
         [Display(Name = "Explanation of other Sources")]
         public string OtherSourceExplain { get; set; }
 
-        [Display(Name = "One Time Purchase")]
+        [Display(Name = "One Time Purchase/Project")]
         public bool OneTimePurchase { get; set; }
 
-        [Display(Name = "Recurring Need")]
+        [Display(Name = "Recurring Operational Need")]
         public bool RecurringNeed { get; set; }
 
-        [Display(Name = "Replace Asset")]
+        [Display(Name = "Replace Existing Asset")]
         public bool ReplaceAsset { get; set; }
 
         [Display(Name = "Year")]
