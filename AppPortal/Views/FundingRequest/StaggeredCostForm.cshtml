@@ -1,51 +1,114 @@
-﻿@model AppPortal.Models.StaggeredCost
+﻿@model AppPortal.ViewModels.StaggeredCostViewModel
+
 @{
-    ViewData["Title"] = "NewCost";
+    ViewData["Title"] = "Staggered Cost";
 }
 
 <h3>Funding Request</h3>
 
 <hr />
-
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="SaveCost" method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="FiscalYear" class="control-label"></label>
-                <input asp-for="FiscalYear" class="form-control" />
-                <span asp-validation-for="FiscalYear" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Amount" class="control-label"></label>
-                <input asp-for="Amount" class="form-control" />
-                <span asp-validation-for="Amount" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="AmtJustification" class="control-label"></label>
-                <input asp-for="AmtJustification" class="form-control" />
-                <span asp-validation-for="AmtJustification" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DescOfActivity" class="control-label"></label>
-                <input asp-for="DescOfActivity" class="form-control" />
-                <span asp-validation-for="DescOfActivity" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Id" class="control-label"></label>
-                <input asp-for="Id" class="form-control" />
-            </div>
-
-            <input type="hidden" asp-for="CapfundingRequestId" />
-            <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-            <div> 
-                <a asp-action="Edit" asp-route-id="@TempData["requestId"]">Back To List</a> 
-            </div>
-        </form>
+<form asp-action="SaveCost" method="post" enctype="multipart/form-data" class="form-horizontal"> 
+ 
+    <div class="panel panel-default">
+        <div class="panel-heading">Program Information</div> 
+        <div class="panel-body">
+            <dl class="dl-horizontal"> 
+                <dt> @Html.DisplayNameFor(model => model.CapFundingRequest.ProgramNum) </dt>
+                <dd> @Html.DisplayFor(model => model.CapFundingRequest.ProgramNum) </dd> 
+                <dt> @Html.DisplayNameFor(model => model.CapFundingRequest.DivisionName) </dt>
+                <dd> @Html.DisplayFor(model => model.CapFundingRequest.DivisionName) </dd> 
+                <dt> @Html.DisplayNameFor(model => model.CapFundingRequest.ProgramName) </dt>
+                <dd> @Html.DisplayFor(model => model.CapFundingRequest.ProgramName) </dd> 
+                <dt> @Html.DisplayNameFor(model => model.CapFundingRequest.DivLead) </dt>
+                <dd> @Html.DisplayFor(model => model.CapFundingRequest.DivLead) </dd> 
+                <dt> @Html.DisplayNameFor(model => model.CapFundingRequest.Initiator) </dt>
+                <dd> @Html.DisplayFor(model => model.CapFundingRequest.Initiator) </dd>
+            </dl> 
+        </div> 
     </div>
-</div>
 
+    <div class="panel panel-default"> 
+        <div class="panel-body"> 
+            @if (!Model.StaggeredCosts.Any())
+            { 
+            <p> 
+                No Project Costs Entered Yet!
+            </p>
+            }
+            else
+            {
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Fiscal Year</th>
+                            <th>Amount</th>
+                            <th>Amt. Justification</th>
+                            <th>Description of Activity</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var item in Model.StaggeredCosts)
+                    {
+                        <tr>
+                            <td> @Html.DisplayFor(modelItem => item.FiscalYear) </td>
+                            <td> @Html.DisplayFor(modelItem => item.Amount) </td>
+                            <td> @Html.DisplayFor(modelItem => item.AmtJustification) </td>
+                            <td> @Html.DisplayFor(modelItem => item.DescOfActivity) </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table> 
+            } 
+
+
+            <div class="form-group">
+                <label asp-for="StaggeredCost.FiscalYear" class="control-label col-md-2"></label>
+                <div class="col-md-2">
+                    <input asp-for="StaggeredCost.FiscalYear" class="form-control" />
+                    <span asp-validation-for="StaggeredCost.FiscalYear" class="text-danger"></span> 
+                </div>
+            </div>
+            <div class="form-group">
+                <label asp-for="StaggeredCost.Amount" class="control-label col-md-2"></label>
+                <div class="col-md-2">
+                    <input asp-for="StaggeredCost.Amount" class="form-control" />
+                    <span asp-validation-for="StaggeredCost.Amount" class="text-danger"></span> 
+                </div>
+            </div>
+            <div class="form-group">
+                <label asp-for="StaggeredCost.AmtJustification" class="control-label col-md-2"></label>
+                <div class="col-md-2">
+                    <input asp-for="StaggeredCost.AmtJustification" class="form-control" />
+                    <span asp-validation-for="StaggeredCost.AmtJustification" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label asp-for="StaggeredCost.DescOfActivity" class="control-label col-md-2"></label>
+                <div class="col-md-2">
+                    <input asp-for="StaggeredCost.DescOfActivity" class="form-control" />
+                    <span asp-validation-for="StaggeredCost.DescOfActivity" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group col-md-2">
+                <label class="control-label">Id used for development purposes</label>
+                <label asp-for="StaggeredCost.Id" />
+            </div>
+        </div>
+    </div>
+
+
+    <input type="hidden" asp-for="StaggeredCost.CapfundingRequestId" />
+    @*<input type="hidden" asp-for="StaggeredCost.Id" />*@
+    <div class="form-group">
+        <input type="submit" value="Save" class="btn btn-primary" />
+    </div>
+    <div> 
+        <a asp-action="Edit" asp-route-id="@TempData["requestId"]">Back To List</a> 
+    </div>
+
+   
+    <input asp-for="CapFundingRequest.Id" hidden="hidden" />
+
+
+</form>
 

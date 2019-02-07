@@ -18,4 +18,5 @@ namespace AppPortal.ViewModels
 
         public IEnumerable<StaggeredCost> StaggeredCosts { get; set; }
     } 
+
 }

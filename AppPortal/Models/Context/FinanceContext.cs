@@ -43,6 +43,10 @@ namespace AppPortal.Models
             modelBuilder.Entity<FundingRequestAttachments>()
                 .Property(e => e.Id)
                 .ValueGeneratedOnAdd();
+
+            modelBuilder.Entity<StaggeredCost>()
+                .Property(e => e.Id)
+                .ValueGeneratedOnAdd();
                 
 
             modelBuilder.Entity<FixedAsset>(entity =>

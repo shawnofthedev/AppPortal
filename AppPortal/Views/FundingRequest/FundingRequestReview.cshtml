@@ -123,7 +123,6 @@
     </div> 
  
     <div class="panel panel-default"> 
-        <div class="panel-heading">Staggering Project Costs</div> 
         <div class="panel-body"> 
         @if (!Model.StaggeredCosts.Any())
         { 
@@ -156,7 +155,7 @@
             </table> 
         } 
             <div class="col-md-offset-2 col-md-10"> 
-                <a class="btn btn-primary" asp-action="NewCost" asp-route-id="@Model.CapFundingRequest.Id">Manage Staggered Project Costs</a> 
+                <a class="btn btn-primary" asp-action="NewCost" asp-route-id="@Model.CapFundingRequest.Id" >Manage Staggered Project Costs</a> 
             </div>
         </div> 
     </div>
