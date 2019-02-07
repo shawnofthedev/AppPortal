@@ -293,7 +293,8 @@ namespace AppPortal.Controllers
             var viewModel = new StaggeredCostViewModel
             {
                 CapFundingRequest = request,
-                StaggeredCosts = _context.StaggeredCosts.Where(c => c.CapfundingRequestId == id).ToList(),
+                StaggeredCosts = _context.StaggeredCosts.Where(c => c.CapfundingRequestId == id)
+                    .OrderBy(c => c.FiscalYear).ToList(),
                 StaggeredCost = new StaggeredCost()
             };
 
@@ -317,6 +318,7 @@ namespace AppPortal.Controllers
                     CapFundingRequest = request,
                     StaggeredCost = staggeredCost,
                     StaggeredCosts = _context.StaggeredCosts.Where(c => c.CapfundingRequestId == staggeredCost.CapfundingRequestId)
+                        .OrderBy(c => c.FiscalYear).ToList()
                 };
 
                 return View("StaggeredCostForm", viewModel);
@@ -483,7 +485,8 @@ namespace AppPortal.Controllers
                     FundingRequestAttachments = _context.FundingRequestAttachments
                         .Where(a => a.CapFundingRequestId == fundingRequest.Id).ToList(),
                     StaggeredCosts = _context.StaggeredCosts
-                        .Where(c => c.CapfundingRequestId == fundingRequest.Id).ToList()
+                        .Where(c => c.CapfundingRequestId == fundingRequest.Id)
+                        .OrderBy(c => c.FiscalYear).ToList()
                 };
                 return viewModel;
             }
@@ -496,7 +499,8 @@ namespace AppPortal.Controllers
                     FundingRequestAttachments = _context.FundingRequestAttachments
                         .Where(a => a.CapFundingRequestId == objRequest.Id).ToList(),
                     StaggeredCosts = _context.StaggeredCosts
-                        .Where(c => c.CapfundingRequestId == objRequest.Id).ToList()
+                        .Where(c => c.CapfundingRequestId == objRequest.Id)
+                        .OrderBy(c => c.FiscalYear).ToList()
                 };
                 return viewModel;
             }
