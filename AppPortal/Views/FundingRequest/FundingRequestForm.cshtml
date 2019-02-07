@@ -16,8 +16,6 @@
         <div class="panel-heading">Program Information</div> 
         <div class="panel-body">
             <dl class="dl-horizontal"> 
-                <dt> @Html.DisplayNameFor(model => model.CapFundingRequest.ProgramNum) </dt>
-                <dd> @Html.DisplayFor(model => model.CapFundingRequest.ProgramNum) </dd> 
                 <dt> @Html.DisplayNameFor(model => model.CapFundingRequest.DivisionName) </dt>
                 <dd> @Html.DisplayFor(model => model.CapFundingRequest.DivisionName) </dd> 
                 <dt> @Html.DisplayNameFor(model => model.CapFundingRequest.ProgramName) </dt>
@@ -145,10 +143,6 @@
                         <td> @Html.DisplayFor(modelItem => item.Amount) </td>
                         <td> @Html.DisplayFor(modelItem => item.AmtJustification) </td>
                         <td> @Html.DisplayFor(modelItem => item.DescOfActivity) </td> 
-                        <td>
-                            <a asp-action="EditStagCost" asp-route-id="@item.Id">Edit</a> |
-                            <a asp-action="DeleteStagCost" asp-route-id="@item.Id">Remove</a>
-                        </td>
                     </tr>
                 }
                 </tbody>
@@ -169,8 +163,11 @@
     <div class="form-group">
         <div class="col-md-offset-2 col-md-10"> 
             <br /> 
-            <a class="btn btn-primary" asp-action="Details" asp-route-id="@Model.CapFundingRequest.Id">Details</a> 
             <input type="submit" value="Save" class="btn btn-primary" /> 
+            @if (Model.CapFundingRequest.Id > 0)
+            { 
+                <a class="btn btn-primary" asp-action="Details" asp-route-id="@Model.CapFundingRequest.Id">Details</a> 
+            }
         </div>
     </div> 
 

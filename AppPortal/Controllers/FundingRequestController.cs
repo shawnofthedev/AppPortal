@@ -36,7 +36,8 @@ namespace AppPortal.Controllers
             //Todo **Filter list down to not show withdrawn requests
             List<CapFundingRequest> requestList = _context.CapFundingRequests
                 .Where(r => r.Initiator == userName)
-                .Where(r => r.RequestStatus != "Withdrawn").ToList();
+                .Where(r => r.RequestStatus != "Withdrawn")
+                .OrderBy(r => r.TimeStamp).ToList();
             return View(requestList);
         }
 
@@ -117,17 +118,17 @@ namespace AppPortal.Controllers
             { 
                 TempData["ErrorMessage"] = "Must have a Project/Purchase Name";
                 object getNewViewModel = await CreateViewModel(objFundingRequest);
-                return View(nameof(FundingRequestForm), getNewViewModel);
+                return View("FundingRequestForm", getNewViewModel);
             }
 
             if (objFundingRequest.OneTimePurchase == false && objFundingRequest.RecurringNeed == false && objFundingRequest.ReplaceAsset == false)
             {
                 TempData["ErrorMessage"] = "You must choose at least one purchase reason";
                 object getNewViewModel = await CreateViewModel(objFundingRequest);
-                return View(nameof(FundingRequestForm), getNewViewModel);
+                return View("FundingRequstForm", getNewViewModel);
             } 
 
-            if (objFundingRequest.AmtOtherSource == 0)
+            if (objFundingRequest.AmtOtherSource > 0)
             {
                 if (objFundingRequest.OtherSourceExplain == "" || objFundingRequest.OtherSourceExplain == null)
                 {
@@ -164,13 +165,13 @@ namespace AppPortal.Controllers
 
                 //add together the funding amounts for a total
                 objFundingRequest.TotalCost = objFundingRequest.AmtRequest + objFundingRequest.AmtOtherSource;
-                objFundingRequest.RequestStatus = "Created";
+                objFundingRequest.RequestStatus = "In Progress";
 
                 await _context.CapFundingRequests.AddAsync(objFundingRequest);
             }
             else
             {
-                CapFundingRequest requestInDb = _context.CapFundingRequests.Single(r => r.Id == objFundingRequest.Id);
+                CapFundingRequest requestInDb = await _context.CapFundingRequests.SingleAsync(r => r.Id == objFundingRequest.Id);
 
                 requestInDb.ProgramNum = objFundingRequest.ProgramNum;
                 requestInDb.ProgramName = objFundingRequest.ProgramName;
@@ -194,7 +195,7 @@ namespace AppPortal.Controllers
                 requestInDb.AssetNum = objFundingRequest.AssetNum;
                 requestInDb.Serial = objFundingRequest.Serial;
                 requestInDb.AssetDesc = objFundingRequest.AssetDesc;
-                requestInDb.RequestStatus = "Edited";
+                requestInDb.RequestStatus = objFundingRequest.RequestStatus;
             } 
 
             await _context.SaveChangesAsync();
@@ -299,15 +300,26 @@ namespace AppPortal.Controllers
             return View("StaggeredCostForm", viewModel);
         }
 
-        public async Task<IActionResult> EditStagCost(int id)
+        public async Task<IActionResult> EditStagCost(int? id)
         {
+            if (id == null)
+                return NotFound(); 
             StaggeredCost staggeredCost = await _context.StaggeredCosts.SingleOrDefaultAsync(s => s.Id == id);
-            TempData["requestId"] = staggeredCost.CapfundingRequestId;
+            CapFundingRequest request = await _context.CapFundingRequests.SingleOrDefaultAsync(r => r.Id == staggeredCost.CapfundingRequestId);
+            //TempData["requestId"] = staggeredCost.CapfundingRequestId;
+            
             if (staggeredCost == null)
                 return NotFound();
             else
-            { 
-                return View("StaggeredCostForm", staggeredCost);
+            {
+                var viewModel = new StaggeredCostViewModel
+                {
+                    CapFundingRequest = request,
+                    StaggeredCost = staggeredCost,
+                    StaggeredCosts = _context.StaggeredCosts.Where(c => c.CapfundingRequestId == staggeredCost.CapfundingRequestId)
+                };
+
+                return View("StaggeredCostForm", viewModel);
             }
 
         }
@@ -345,9 +357,7 @@ namespace AppPortal.Controllers
 
             object viewModel = await CreateViewModel(request);
 
-            return View(nameof(FundingRequestForm), viewModel);
- 
-            //return RedirectToAction(nameof(Edit), new { requestId }); 
+            return View("FundingRequestReview", viewModel); 
         }
 
         //not working. Continues to insert an id in the model.
@@ -356,26 +366,33 @@ namespace AppPortal.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SaveCost(StaggeredCostViewModel costViewModel) 
         {
+            StaggeredCost objStaggeredCost = costViewModel.StaggeredCost;
 
-            if (costViewModel.StaggeredCost.Id == 0)
+            if (objStaggeredCost.Id == 0)
             {
-                StaggeredCost objStaggeredCost = new StaggeredCost
-                {
-                    FiscalYear = costViewModel.StaggeredCost.FiscalYear,
-                    Amount = costViewModel.StaggeredCost.Amount,
-                    AmtJustification = costViewModel.StaggeredCost.AmtJustification,
-                    DescOfActivity = costViewModel.StaggeredCost.DescOfActivity,
-                    CapfundingRequestId = costViewModel.CapFundingRequest.Id,
-                };
 
-                await _context.AddAsync(objStaggeredCost);
+                //FiscalYear = costViewModel.StaggeredCost.FiscalYear, 
+                //Amount = costViewModel.StaggeredCost.Amount,
+                //AmtJustification = costViewModel.StaggeredCost.AmtJustification,
+                //DescOfActivity = costViewModel.StaggeredCost.DescOfActivity,
+                objStaggeredCost.CapfundingRequestId = costViewModel.CapFundingRequest.Id;
+
+                await _context.StaggeredCosts.AddAsync(objStaggeredCost);
             }
             else
             {
-                _context.Update(costViewModel);
+                StaggeredCost costInDb = await _context.StaggeredCosts.SingleAsync(c => c.Id == costViewModel.StaggeredCost.Id);
+
+                costInDb.FiscalYear = costViewModel.StaggeredCost.FiscalYear;
+                costInDb.Amount = costViewModel.StaggeredCost.Amount;
+                costInDb.AmtJustification = costViewModel.StaggeredCost.AmtJustification;
+                costInDb.DescOfActivity = costViewModel.StaggeredCost.DescOfActivity;
+                costInDb.CapfundingRequestId = costViewModel.StaggeredCost.CapfundingRequestId; 
             } 
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Details), new { costViewModel.CapFundingRequest.Id }); 
+
         } 
 
 

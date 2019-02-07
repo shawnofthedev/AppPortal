@@ -76,18 +76,17 @@
             </div> 
             <div class="form-group">
                 <div class="col-md-10">
-                    <input type="submit" value="Upload" />
+                    <input class="btn btn-primary" type="submit" value="Upload" />
+                </div>
+            </div>
+            <div class="form-group"> 
+                <div class="col-md-10"> 
+                    <a asp-action="Details" asp-route-id="@Model.CapFundingRequest.Id">Return To Request Form</a> 
                 </div>
             </div>
         </div> 
     </div> 
 
-    <div class="form-group"> 
-        <div class="col-md-offset-2 col-md-10"> 
-            <br /> 
-            <a class="btn btn-primary" asp-action="Details" asp-route-id="@Model.CapFundingRequest.Id">Return To Request Form</a> 
-        </div>
-    </div>
 
 </form>
 

@@ -13,8 +13,6 @@
         <div class="panel-heading">Program Information</div> 
         <div class="panel-body">
             <dl class="dl-horizontal"> 
-                <dt> @Html.DisplayNameFor(model => model.CapFundingRequest.ProgramNum) </dt>
-                <dd> @Html.DisplayFor(model => model.CapFundingRequest.ProgramNum) </dd> 
                 <dt> @Html.DisplayNameFor(model => model.CapFundingRequest.DivisionName) </dt>
                 <dd> @Html.DisplayFor(model => model.CapFundingRequest.DivisionName) </dd> 
                 <dt> @Html.DisplayNameFor(model => model.CapFundingRequest.ProgramName) </dt>
@@ -28,7 +26,12 @@
     </div>
 
     <div class="panel panel-default"> 
+        <div class="panel-heading">Staggering Project Costs</div> 
         <div class="panel-body"> 
+            <dl class="dl-horizontal">
+                <dt>@Html.DisplayNameFor(model => model.CapFundingRequest.TotalCost)</dt>
+                <dd>@Html.DisplayFor(model => model.CapFundingRequest.TotalCost)</dd>
+            </dl>
             @if (!Model.StaggeredCosts.Any())
             { 
             <p> 
@@ -89,26 +92,25 @@
                     <span asp-validation-for="StaggeredCost.DescOfActivity" class="text-danger"></span>
                 </div>
             </div>
-            <div class="form-group col-md-2">
-                <label class="control-label">Id used for development purposes</label>
-                <label asp-for="StaggeredCost.Id" />
+            <div class="form-group">
+                <label class="control-label col-md-2">Id used for development purposes</label>
+                <div class="col-md-2">
+                    <input asp-for="StaggeredCost.Id" class="form-control" readonly="readonly" />
+                </div>
             </div>
         </div>
     </div>
 
 
     <input type="hidden" asp-for="StaggeredCost.CapfundingRequestId" />
-    @*<input type="hidden" asp-for="StaggeredCost.Id" />*@
+
     <div class="form-group">
         <input type="submit" value="Save" class="btn btn-primary" />
     </div>
     <div> 
-        <a asp-action="Edit" asp-route-id="@TempData["requestId"]">Back To List</a> 
+        <a asp-action="Details" asp-route-id="@Model.CapFundingRequest.Id">Back To List</a> 
     </div>
-
-   
-    <input asp-for="CapFundingRequest.Id" hidden="hidden" />
-
-
+ 
+    <input type="hidden" asp-for="CapFundingRequest.Id" />
 </form>
 
