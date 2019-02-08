@@ -17,6 +17,23 @@ namespace AppPortal.ViewModels
         public IEnumerable<FundingRequestAttachments> FundingRequestAttachments { get; set; }
 
         public IEnumerable<StaggeredCost> StaggeredCosts { get; set; }
-    } 
 
+        public IEnumerable<AttachedQuote> AttachedQuotes { get; set; }
+    }
+    public class StaggeredCostViewModel
+    {
+        public CapFundingRequest CapFundingRequest { get; set; }
+
+        public StaggeredCost StaggeredCost { get; set; }
+
+        public IEnumerable<StaggeredCost> StaggeredCosts { get; set; }
+    }
+    public class QuotesViewModel
+    { 
+        public CapFundingRequest CapFundingRequest { get; set; }
+
+        public AttachedQuote AttachedQuote { get; set; }
+
+        public IEnumerable<AttachedQuote> AttachedQuotes { get; set; }
+    }
 }

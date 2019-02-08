@@ -1,7 +1,7 @@
 ﻿@model AppPortal.ViewModels.FundingRequestViewModel
 
 @{
-    ViewData["Title"] = "Vendor";
+    ViewData["Title"] = "Review";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -100,17 +100,17 @@
             </dl> 
             <dl class="dl-horizontal">
                 <dt>Files</dt>
-            @if (!Model.FundingRequestAttachments.Any())
-            {
-                    <dd>No supporting files at this submitted yet</dd> 
-            }
-            else
-            { 
-                @foreach (var files in Model.FundingRequestAttachments)
+                @if (!Model.FundingRequestAttachments.Any())
                 {
-                    <dd> @Html.DisplayFor(Model => files.FileName) </dd> 
+                        <dd>No supporting files at this submitted yet</dd> 
+                }
+                else
+                { 
+                    @foreach (var files in Model.FundingRequestAttachments)
+                    {
+                        <dd> @Html.DisplayFor(Model => files.FileName) </dd> 
+                    } 
                 } 
-            } 
             </dl>
              <div class="col-md-offset-2 col-md-10"> 
                  <a class="btn btn-primary" asp-action="SupportingDocuments" asp-route-id="@Model.CapFundingRequest.Id">Manage supporting Documents</a> 
@@ -157,6 +157,47 @@
         } 
             <div class="col-md-offset-2 col-md-10"> 
                 <a class="btn btn-primary" asp-action="NewCost" asp-route-id="@Model.CapFundingRequest.Id" >Add a staggered cost</a> 
+            </div>
+        </div> 
+    </div>
+
+    <div class="panel panel-default"> 
+        <div class="panel-heading">Quotes</div> 
+        <div class="panel-body"> 
+            @if (!Model.AttachedQuotes.Any())
+            { 
+            <p> 
+                No Quotes attached yet!
+            </p>
+            }
+            else
+            {
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Vendor Name</th>
+                            <th>Telephone #</th>
+                            <th>Contact Name</th>
+                            <th>Quote</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var item in Model.AttachedQuotes)
+                    {
+                        <tr>
+                            <td> @Html.DisplayFor(modelItem => item.VendorName) </td>
+                            <td> @Html.DisplayFor(modelItem => item.ContactNum) </td>
+                            <td> @Html.DisplayFor(modelItem => item.ContactName) </td>
+                            <td> @Html.DisplayFor(modelItem => item.QuoteAmt) </td>
+                            <td> @Html.DisplayFor(modelItem => item.QuoteDate) </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table> 
+            } 
+            <div class="col-md-offset-2 col-md-10"> 
+                <a class="btn btn-primary" asp-action="NewQuote" asp-route-id="@Model.CapFundingRequest.Id" >Add a vendor quote</a> 
             </div>
         </div> 
     </div>

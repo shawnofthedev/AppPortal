@@ -87,6 +87,7 @@ namespace AppPortal.Models
 
         public IEnumerable<StaggeredCost> StaggeredCosts { get; set; }
 
+        public IEnumerable<AttachedQuote> AttachedQuotes { get; set; } 
     }
 
     public class FundingRequestAttachments
@@ -126,4 +127,39 @@ namespace AppPortal.Models
         public int CapfundingRequestId { get; set; }
 
     } 
+
+    public class AttachedQuote 
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
+ 
+        [Display(Name = "Vendor Name")]
+        public string VendorName { get; set; }
+
+        [Required(ErrorMessage = "You must provide a phone number")]
+        [Display(Name = "Telephone #")]
+        [DataType(DataType.PhoneNumber)]
+        [RegularExpression(@"^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$", ErrorMessage = "Not a valid phone number")]
+        public string ContactNum { get; set; }
+
+
+        [Display(Name = "Contact Name")]
+        public string ContactName { get; set; }
+
+        [Display(Name = "Quote")]
+        public decimal QuoteAmt { get; set; }
+
+        [Display(Name = "Date")]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:MM/dd/yyyy}")]
+        public DateTime QuoteDate { get; set; }
+
+        public string AttachedFileName { get; set; }
+
+        public string AttachedFileLocation { get; set; }
+
+        public CapFundingRequest CapFundingRequest { get; set; }
+
+        public int CapFundingRequestId { get; set; } 
+    }
 }

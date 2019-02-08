@@ -21,6 +21,7 @@ namespace AppPortal.Models
         public virtual DbSet<CapFundingRequest> CapFundingRequests { get; set; }
         public virtual DbSet<FundingRequestAttachments> FundingRequestAttachments { get; set; }
         public virtual DbSet<StaggeredCost> StaggeredCosts { get; set; }
+        public virtual DbSet<AttachedQuote> AttachedQuote { get; set; }
  
 
         public DbSet<MunisVw_EmployeeMaster> MunisVw_EmployeeMaster { get; set; }
@@ -45,6 +46,10 @@ namespace AppPortal.Models
                 .ValueGeneratedOnAdd();
 
             modelBuilder.Entity<StaggeredCost>()
+                .Property(e => e.Id)
+                .ValueGeneratedOnAdd();
+
+            modelBuilder.Entity<AttachedQuote>()
                 .Property(e => e.Id)
                 .ValueGeneratedOnAdd();
                 

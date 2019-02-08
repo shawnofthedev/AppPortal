@@ -105,7 +105,9 @@
     <input type="hidden" asp-for="StaggeredCost.CapfundingRequestId" />
 
     <div class="form-group">
-        <input type="submit" value="Save" class="btn btn-primary" />
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" value="Save" class="btn btn-primary" /> 
+        </div>
     </div>
     <div> 
         <a asp-action="Details" asp-route-id="@Model.CapFundingRequest.Id">Back To List</a> 

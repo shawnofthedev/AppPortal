@@ -41,10 +41,53 @@ namespace AppPortal.Controllers
             return View(requestList);
         }
 
+        //**************************************************************************
+        //New Actions
+        //**************************************************************************
         public IActionResult New()
         {
             return View();
         }
+
+        public async Task<IActionResult> NewCost(int? id)
+        {
+            if (id == null)
+                return NotFound();
+            CapFundingRequest request = await _context.CapFundingRequests.SingleOrDefaultAsync(r => r.Id == id); 
+            if (request == null)
+                return NotFound();
+
+            var viewModel = new StaggeredCostViewModel
+            {
+                CapFundingRequest = request,
+                StaggeredCosts = _context.StaggeredCosts.Where(c => c.CapfundingRequestId == id)
+                    .OrderBy(c => c.FiscalYear).ToList(),
+                StaggeredCost = new StaggeredCost()
+            };
+
+            return View("StaggeredCostForm", viewModel);
+        }
+
+        public async Task<IActionResult> NewQuote(int? id)
+        {
+            if (id == null)
+                return NotFound();
+
+            CapFundingRequest request = await _context.CapFundingRequests.SingleOrDefaultAsync(r => r.Id == id);
+            if (request == null)
+                return NotFound();
+            var viewModel = new QuotesViewModel
+            {
+                CapFundingRequest = request,
+                AttachedQuote = new AttachedQuote(),
+                AttachedQuotes = _context.AttachedQuote.Where(q => q.CapFundingRequestId == id)
+            };
+            
+            return View("QuoteForm",viewModel);
+        }
+        //**************************************************************************
+        //End New Actions
+        //**************************************************************************
 
         //Load the form for a new request
         public async Task<IActionResult> FundingRequestForm(Vw_DivisionMaster vw_DivisionMaster)
@@ -278,28 +321,6 @@ namespace AppPortal.Controllers
             return View("FundingRequestReview", viewModel); 
         }
  
-        public async Task<IActionResult> NewCost(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            } 
-            CapFundingRequest request = await _context.CapFundingRequests.SingleOrDefaultAsync(r => r.Id == id); 
-            if (request == null)
-            {
-                return NotFound();
-            }
-
-            var viewModel = new StaggeredCostViewModel
-            {
-                CapFundingRequest = request,
-                StaggeredCosts = _context.StaggeredCosts.Where(c => c.CapfundingRequestId == id)
-                    .OrderBy(c => c.FiscalYear).ToList(),
-                StaggeredCost = new StaggeredCost()
-            };
-
-            return View("StaggeredCostForm", viewModel);
-        }
 
         public async Task<IActionResult> EditStagCost(int? id)
         {
@@ -415,8 +436,7 @@ namespace AppPortal.Controllers
             }
 
             return View(request);
-        }
-
+        } 
 
         // POST: CapFundingRequest/Delete/5
         [HttpPost, ActionName("Delete")]
@@ -473,6 +493,9 @@ namespace AppPortal.Controllers
             return View("SupportingDocuments", viewModel);
         }
 
+        //**************************************************************************
+        //ViewModel Creation helper funcion
+        //**************************************************************************
         public async Task<object> CreateViewModel(CapFundingRequest fundingRequest)
         {
             //if we have new request coming in and we need to build a
@@ -486,7 +509,9 @@ namespace AppPortal.Controllers
                         .Where(a => a.CapFundingRequestId == fundingRequest.Id).ToList(),
                     StaggeredCosts = _context.StaggeredCosts
                         .Where(c => c.CapfundingRequestId == fundingRequest.Id)
-                        .OrderBy(c => c.FiscalYear).ToList()
+                        .OrderBy(c => c.FiscalYear).ToList(),
+                    AttachedQuotes = _context.AttachedQuote
+                        .Where(q => q.CapFundingRequestId == fundingRequest.Id).ToList(),
                 };
                 return viewModel;
             }
@@ -500,14 +525,15 @@ namespace AppPortal.Controllers
                         .Where(a => a.CapFundingRequestId == objRequest.Id).ToList(),
                     StaggeredCosts = _context.StaggeredCosts
                         .Where(c => c.CapfundingRequestId == objRequest.Id)
-                        .OrderBy(c => c.FiscalYear).ToList()
+                        .OrderBy(c => c.FiscalYear).ToList(),
+                    AttachedQuotes = _context.AttachedQuote
+                        .Where(q => q.CapFundingRequestId == fundingRequest.Id).ToList(),
                 };
                 return viewModel;
             }
         }
-        private bool CostsExists(int id)
-        {
-            return _context.StaggeredCosts.Any(s => s.Id == id);
-        }
+        //**************************************************************************
+        //End ViewModel Creation helper funcion
+        //**************************************************************************
     }
 }
