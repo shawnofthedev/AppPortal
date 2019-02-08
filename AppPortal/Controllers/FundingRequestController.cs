@@ -85,10 +85,6 @@ namespace AppPortal.Controllers
             
             return View("QuoteForm",viewModel);
         }
-        //**************************************************************************
-        //End New Actions
-        //**************************************************************************
-
         //Load the form for a new request
         public async Task<IActionResult> FundingRequestForm(Vw_DivisionMaster vw_DivisionMaster)
         {
@@ -125,6 +121,10 @@ namespace AppPortal.Controllers
 
             return View(viewModel); 
         }
+        //**************************************************************************
+        //End New Actions
+        //************************************************************************** 
+
 
         public async Task<IActionResult> Edit(int id)
         {
@@ -150,6 +150,9 @@ namespace AppPortal.Controllers
             return View("FundingRequestReview", viewModel);
         }
 
+        //**************************************************************************
+        //Start Save Actions
+        //************************************************************************** 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Save(FundingRequestViewModel capFunding) 
@@ -247,26 +250,7 @@ namespace AppPortal.Controllers
  
             return View("FundingRequestReview", viewModel); 
 
-        }
-
-        public async Task<IActionResult> SupportingDocuments(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound(); 
-            }
-
-            CapFundingRequest request = await _context.CapFundingRequests.SingleOrDefaultAsync(r => r.Id == id);
-
-            if (request == null)
-            {
-                return NotFound(); 
-            }
-
-            var viewModel = await CreateViewModel(request);
-
-            return View(viewModel);
-        }
+        } 
 
         [HttpPost]
         public async Task<IActionResult> FileUpload(FundingRequestViewModel request, List<IFormFile> files)
@@ -320,7 +304,70 @@ namespace AppPortal.Controllers
 
             return View("FundingRequestReview", viewModel); 
         }
- 
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SaveCost(StaggeredCostViewModel costViewModel) 
+        {
+            StaggeredCost objStaggeredCost = costViewModel.StaggeredCost;
+
+            if (objStaggeredCost.Id == 0)
+            {
+                objStaggeredCost.CapfundingRequestId = costViewModel.CapFundingRequest.Id;
+
+                await _context.StaggeredCosts.AddAsync(objStaggeredCost);
+            }
+            else
+            {
+                StaggeredCost costInDb = await _context.StaggeredCosts.SingleAsync(c => c.Id == costViewModel.StaggeredCost.Id);
+
+                costInDb.FiscalYear = costViewModel.StaggeredCost.FiscalYear;
+                costInDb.Amount = costViewModel.StaggeredCost.Amount;
+                costInDb.AmtJustification = costViewModel.StaggeredCost.AmtJustification;
+                costInDb.DescOfActivity = costViewModel.StaggeredCost.DescOfActivity;
+                costInDb.CapfundingRequestId = costViewModel.StaggeredCost.CapfundingRequestId; 
+            } 
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Details), new { costViewModel.CapFundingRequest.Id }); 
+        } 
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SaveCost(QuotesViewModel quotesViewModel)
+        {
+            AttachedQuote objAttachedQuote = quotesViewModel.AttachedQuote;
+            if (objAttachedQuote.Id == 0)
+            {
+                objAttachedQuote.CapFundingRequestId = quotesViewModel.CapFundingRequest.Id;
+                await _context.AttachedQuote.AddAsync(objAttachedQuote);
+            }
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Details), new { quotesViewModel.CapFundingRequest.Id });
+        }
+
+        //**************************************************************************
+        //End Save Actions
+        //************************************************************************** 
+        public async Task<IActionResult> SupportingDocuments(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound(); 
+            }
+
+            CapFundingRequest request = await _context.CapFundingRequests.SingleOrDefaultAsync(r => r.Id == id);
+
+            if (request == null)
+            {
+                return NotFound(); 
+            }
+
+            var viewModel = await CreateViewModel(request);
+
+            return View(viewModel);
+        } 
 
         public async Task<IActionResult> EditStagCost(int? id)
         {
@@ -383,40 +430,6 @@ namespace AppPortal.Controllers
             return View("FundingRequestReview", viewModel); 
         }
 
-        //not working. Continues to insert an id in the model.
-        //Probably entity framework issue.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> SaveCost(StaggeredCostViewModel costViewModel) 
-        {
-            StaggeredCost objStaggeredCost = costViewModel.StaggeredCost;
-
-            if (objStaggeredCost.Id == 0)
-            {
-
-                //FiscalYear = costViewModel.StaggeredCost.FiscalYear, 
-                //Amount = costViewModel.StaggeredCost.Amount,
-                //AmtJustification = costViewModel.StaggeredCost.AmtJustification,
-                //DescOfActivity = costViewModel.StaggeredCost.DescOfActivity,
-                objStaggeredCost.CapfundingRequestId = costViewModel.CapFundingRequest.Id;
-
-                await _context.StaggeredCosts.AddAsync(objStaggeredCost);
-            }
-            else
-            {
-                StaggeredCost costInDb = await _context.StaggeredCosts.SingleAsync(c => c.Id == costViewModel.StaggeredCost.Id);
-
-                costInDb.FiscalYear = costViewModel.StaggeredCost.FiscalYear;
-                costInDb.Amount = costViewModel.StaggeredCost.Amount;
-                costInDb.AmtJustification = costViewModel.StaggeredCost.AmtJustification;
-                costInDb.DescOfActivity = costViewModel.StaggeredCost.DescOfActivity;
-                costInDb.CapfundingRequestId = costViewModel.StaggeredCost.CapfundingRequestId; 
-            } 
-
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Details), new { costViewModel.CapFundingRequest.Id }); 
-
-        } 
 
 
         // GET: CapFundingRequest/Delete/5

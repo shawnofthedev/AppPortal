@@ -151,8 +151,9 @@ namespace AppPortal.Models
         public decimal QuoteAmt { get; set; }
 
         [Display(Name = "Date")]
-        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:MM/dd/yyyy}")]
-        public DateTime QuoteDate { get; set; }
+        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:d}", ApplyFormatInEditMode = true)]
+        public DateTime? QuoteDate { get; set; }
 
         public string AttachedFileName { get; set; }
 

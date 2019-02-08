@@ -103,21 +103,26 @@
                     <input asp-for="AttachedQuote.Id" class="form-control" readonly="readonly" />
                 </div>
             </div>
+            <div class="form-group">
+                <div class="col-md-3">
+                    <p><strong>Upload one or more pdf files:</strong></p>
+                    <input type="file" name="files" multiple />
+                    <br />
+                </div>
+            </div> 
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input class="btn btn-primary" type="submit" value="Save" />
+                </div>
+            </div> 
         </div>
     </div>
 
-
-    <input type="hidden" asp-for="AttachedQuote.CapFundingRequestId" />
-
-    <div class="form-group">
-        <div class="col-md-offset-2 col-md-10">
-            <input type="submit" value="Save" class="btn btn-primary" /> 
-        </div>
-    </div>
+    <input type="hidden" asp-for="AttachedQuote.CapFundingRequestId" /> 
+    <input type="hidden" asp-for="CapFundingRequest.Id" /> 
+    
     <div> 
         <a asp-action="Details" asp-route-id="@Model.CapFundingRequest.Id">Back To List</a> 
     </div>
- 
-    <input type="hidden" asp-for="CapFundingRequest.Id" />
 </form>
 
