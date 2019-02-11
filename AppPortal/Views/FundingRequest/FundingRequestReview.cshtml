@@ -105,10 +105,13 @@
                         <dd>No supporting files at this submitted yet</dd> 
                 }
                 else
-                { 
+                {
+                    // Todo Not Working yet need to fix hyperlink
                     @foreach (var files in Model.FundingRequestAttachments)
                     {
-                        <dd> @Html.DisplayFor(Model => files.FileName) </dd> 
+                        <dd>
+                            <a asp-action="GetFile" asp-route-id="@files.Id">@Html.DisplayFor(Model => files.FileName)</a>
+                        </dd>
                     } 
                 } 
             </dl>
@@ -136,6 +139,7 @@
                         <th>Amount</th>
                         <th>Amt. Justification</th>
                         <th>Description of Activity</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -180,6 +184,7 @@
                             <th>Contact Name</th>
                             <th>Quote</th>
                             <th>Date</th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -191,6 +196,10 @@
                             <td> @Html.DisplayFor(modelItem => item.ContactName) </td>
                             <td> @Html.DisplayFor(modelItem => item.QuoteAmt) </td>
                             <td> @Html.DisplayFor(modelItem => item.QuoteDate) </td>
+                            <td>
+                                <a asp-action="EditQuote" asp-route-id="@item.Id">Edit</a> |
+                                <a asp-action="DeleteQuote" asp-route-id="@item.Id">Remove</a> 
+                            </td>
                         </tr>
                     }
                     </tbody>

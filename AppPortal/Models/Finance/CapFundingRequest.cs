@@ -137,10 +137,8 @@ namespace AppPortal.Models
         [Display(Name = "Vendor Name")]
         public string VendorName { get; set; }
 
-        [Required(ErrorMessage = "You must provide a phone number")]
         [Display(Name = "Telephone #")]
         [DataType(DataType.PhoneNumber)]
-        [RegularExpression(@"^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$", ErrorMessage = "Not a valid phone number")]
         public string ContactNum { get; set; }
 
 
@@ -152,7 +150,6 @@ namespace AppPortal.Models
 
         [Display(Name = "Date")]
         [DataType(DataType.Date)]
-        [DisplayFormat(DataFormatString = "{0:d}", ApplyFormatInEditMode = true)]
         public DateTime? QuoteDate { get; set; }
 
         public string AttachedFileName { get; set; }

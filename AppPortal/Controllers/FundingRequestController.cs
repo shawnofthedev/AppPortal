@@ -150,6 +150,25 @@ namespace AppPortal.Controllers
             return View("FundingRequestReview", viewModel);
         }
 
+        public async Task<IActionResult> EditQuote(int id)
+        {
+            var quote = await _context.AttachedQuote.SingleOrDefaultAsync(q => q.Id == id);
+            var request = await _context.CapFundingRequests.SingleOrDefaultAsync(r => r.Id == quote.CapFundingRequestId);
+            if (quote == null)
+                return NotFound();
+            else
+            {
+                var viewModel = new QuotesViewModel
+                {
+                    CapFundingRequest = request,
+                    AttachedQuote = quote,
+                    AttachedQuotes = _context.AttachedQuote.Where(q => q.CapFundingRequestId == id)
+                };
+                return View("QuoteForm", viewModel);
+            } 
+        }
+
+
         //**************************************************************************
         //Start Save Actions
         //************************************************************************** 
@@ -269,7 +288,7 @@ namespace AppPortal.Controllers
             }
 
             //build path to pdf folder
-            string dir = Path.Combine("E:\\ApplicationDocuments\\FundingRequests\\pdf\\",
+            string dir = Path.Combine("E:\\ApplicationDocuments\\FundingRequests\\BudgetExplanations\\",
                 request.CapFundingRequest.ProjectName + "_" + request.CapFundingRequest.Id);
 
             //create directory by default if one already exists it will ignore the line
@@ -334,12 +353,38 @@ namespace AppPortal.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> SaveCost(QuotesViewModel quotesViewModel)
+        public async Task<IActionResult> SaveQuote(QuotesViewModel quotesViewModel, IFormFile files)
         {
+            //Check if there is a file and if its in the right format
+            string ext = Path.GetExtension(files.FileName);
+            if (files.Length < 0 || ext != ".pdf")
+            {
+                TempData["ErrorMessage"] = "Files not in the correct format.";
+                return RedirectToAction(nameof(Details), new { quotesViewModel.CapFundingRequest.Id});
+            }
+
+            //build path to folder to store file
+            string dir = Path.Combine("E:\\ApplicationDocuments\\FundingRequests\\Quotes\\",
+                quotesViewModel.CapFundingRequest.ProjectName + "_" + quotesViewModel.CapFundingRequest.Id);
+            //create the directory, this will only happen if one does not already exist
+            Directory.CreateDirectory(dir);
+            int requestId = quotesViewModel.CapFundingRequest.Id;
+
+            //get the filename and filepath to copy to filesystem
+            string fileName = Path.GetFileName(files.FileName);
+            string filePath = Path.Combine(dir, fileName);
+            using (FileStream stream = new FileStream(filePath, FileMode.Create))
+            {
+                await files.CopyToAsync(stream);
+            }
+
+            //now we write it to the database
             AttachedQuote objAttachedQuote = quotesViewModel.AttachedQuote;
             if (objAttachedQuote.Id == 0)
             {
+                objAttachedQuote.AttachedFileName = fileName;
                 objAttachedQuote.CapFundingRequestId = quotesViewModel.CapFundingRequest.Id;
+                objAttachedQuote.AttachedFileLocation = filePath;
                 await _context.AttachedQuote.AddAsync(objAttachedQuote);
             }
 
@@ -497,13 +542,57 @@ namespace AppPortal.Controllers
             _context.FundingRequestAttachments.Remove(attachment);
             await _context.SaveChangesAsync();
 
-            var viewModel = new FundingRequestViewModel
+            FundingRequestViewModel viewModel = new FundingRequestViewModel
             {
                 CapFundingRequest = request,
                 FundingRequestAttachments = _context.FundingRequestAttachments.Where(a => a.CapFundingRequestId == request.Id),
             };
 
             return View("SupportingDocuments", viewModel);
+        }
+
+        public async Task<IActionResult> DeleteQuote(int? id)
+        {
+            if (id == null)
+                return NotFound(); 
+
+            AttachedQuote attachment = await _context.AttachedQuote
+                .SingleOrDefaultAsync(q => q.Id == id);
+
+            if (attachment == null)
+                return NotFound();
+
+            return View(attachment);
+        }
+ 
+        [HttpPost, ActionName("DeleteQuoteConfirmed")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteQuoteConfirmed(int id)
+        {
+            AttachedQuote quote = await _context.AttachedQuote.SingleOrDefaultAsync(q => q.Id == id);
+            //hold onto the parent request id so we can redirect to the correct form
+            CapFundingRequest request = await _context.CapFundingRequests.SingleOrDefaultAsync(r => r.Id == quote.CapFundingRequestId);
+            //get the location of the file to delete
+            string fileLocation = quote.AttachedFileLocation;
+
+            if (fileLocation != null || fileLocation != "")
+            {
+                System.IO.File.Delete(fileLocation); 
+            }
+            _context.AttachedQuote.Remove(quote);
+            await _context.SaveChangesAsync();
+ 
+            object getNewViewModel = await CreateViewModel(request);
+
+            return View("FundingRequestReview", getNewViewModel);
+        }
+
+
+        //display pdf file in browser
+        public IActionResult GetFile(int id)
+        {
+            FundingRequestAttachments file = _context.FundingRequestAttachments.Single(f => f.Id == id);
+            return new PhysicalFileResult(file.FileLocation, "Application/pdf"); 
         }
 
         //**************************************************************************

@@ -7,7 +7,7 @@
 <h3>Funding Request</h3>
 
 <hr />
-<form asp-action="SaveQuote" method="post" enctype="multipart/form-data" class="form-horizontal"> 
+<form asp-action="SaveQuote" method="post" enctype="form-data" class="form-horizontal"> 
  
     <div class="panel panel-default">
         <div class="panel-heading">Program Information</div> 
@@ -120,6 +120,7 @@
 
     <input type="hidden" asp-for="AttachedQuote.CapFundingRequestId" /> 
     <input type="hidden" asp-for="CapFundingRequest.Id" /> 
+    <input type="hidden" asp-for="CapFundingRequest.ProjectName" />
     
     <div> 
         <a asp-action="Details" asp-route-id="@Model.CapFundingRequest.Id">Back To List</a> 
