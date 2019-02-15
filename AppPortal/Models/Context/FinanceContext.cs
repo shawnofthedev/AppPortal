@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using AppPortal.Models;
+using AppPortal.Models.Finance;
 
 namespace AppPortal.Models
 {
@@ -22,7 +23,12 @@ namespace AppPortal.Models
         public virtual DbSet<FundingRequestAttachments> FundingRequestAttachments { get; set; }
         public virtual DbSet<StaggeredCost> StaggeredCosts { get; set; }
         public virtual DbSet<AttachedQuote> AttachedQuote { get; set; }
- 
+        public virtual DbSet<QuoteAttachments> QuoteAttachments { get; set; }
+        public virtual DbSet<OrgChart> OrgChart { get; set; }
+        public virtual DbSet<Division> Division { get; set; }
+        public virtual DbSet<DivLead> DivLead { get; set; }
+        public virtual DbSet<Analyst> Analyst { get; set; }
+
 
         public DbSet<MunisVw_EmployeeMaster> MunisVw_EmployeeMaster { get; set; }
         public DbSet<MunisVw_EmployeeAnnual> MunisVw_EmployeeAnnual { get; set; }
@@ -52,7 +58,7 @@ namespace AppPortal.Models
             modelBuilder.Entity<AttachedQuote>()
                 .Property(e => e.Id)
                 .ValueGeneratedOnAdd();
-                
+
 
             modelBuilder.Entity<FixedAsset>(entity =>
             {
@@ -107,11 +113,11 @@ namespace AppPortal.Models
 
                 entity.Property(e => e.RequestDate).HasColumnType("datetime");
             });
- 
+
             modelBuilder.Entity<Vw_DivisionMaster>(entity =>
             {
-                entity.Property(e => e.ID).HasColumnName("id"); 
+                entity.Property(e => e.ID).HasColumnName("id");
             });
-        } 
+        }
     }
 }

@@ -14,11 +14,15 @@ namespace AppPortal.ViewModels
 
         public CapFundingRequest CapFundingRequest { get; set; }
 
+        public AttachedQuote AttachedQuote { get; set; }
+
         public IEnumerable<FundingRequestAttachments> FundingRequestAttachments { get; set; }
 
         public IEnumerable<StaggeredCost> StaggeredCosts { get; set; }
 
         public IEnumerable<AttachedQuote> AttachedQuotes { get; set; }
+
+        public IEnumerable<QuoteAttachments> QuoteAttachments { get; set; }
     }
     public class StaggeredCostViewModel
     {
@@ -27,13 +31,5 @@ namespace AppPortal.ViewModels
         public StaggeredCost StaggeredCost { get; set; }
 
         public IEnumerable<StaggeredCost> StaggeredCosts { get; set; }
-    }
-    public class QuotesViewModel
-    { 
-        public CapFundingRequest CapFundingRequest { get; set; }
-
-        public AttachedQuote AttachedQuote { get; set; }
-
-        public IEnumerable<AttachedQuote> AttachedQuotes { get; set; }
     }
 }

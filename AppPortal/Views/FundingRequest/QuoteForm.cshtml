@@ -1,4 +1,4 @@
-﻿@model AppPortal.ViewModels.QuotesViewModel
+﻿@model AppPortal.ViewModels.FundingRequestViewModel
 
 @{
     ViewData["Title"] = "Quotes Form";
@@ -7,73 +7,40 @@
 <h3>Funding Request</h3>
 
 <hr />
-<form asp-action="SaveQuote" method="post" enctype="form-data" class="form-horizontal"> 
- 
+<form asp-action="SaveQuote" method="post" enctype="multipart/form-data" class="form-horizontal">
+
     <div class="panel panel-default">
-        <div class="panel-heading">Program Information</div> 
+        <div class="panel-heading">Program Information</div>
         <div class="panel-body">
-            <dl class="dl-horizontal"> 
+            <dl class="dl-horizontal">
                 <dt> @Html.DisplayNameFor(model => model.CapFundingRequest.DivisionName) </dt>
-                <dd> @Html.DisplayFor(model => model.CapFundingRequest.DivisionName) </dd> 
+                <dd> @Html.DisplayFor(model => model.CapFundingRequest.DivisionName) </dd>
                 <dt> @Html.DisplayNameFor(model => model.CapFundingRequest.ProgramName) </dt>
-                <dd> @Html.DisplayFor(model => model.CapFundingRequest.ProgramName) </dd> 
+                <dd> @Html.DisplayFor(model => model.CapFundingRequest.ProgramName) </dd>
                 <dt> @Html.DisplayNameFor(model => model.CapFundingRequest.DivLead) </dt>
-                <dd> @Html.DisplayFor(model => model.CapFundingRequest.DivLead) </dd> 
+                <dd> @Html.DisplayFor(model => model.CapFundingRequest.DivLead) </dd>
                 <dt> @Html.DisplayNameFor(model => model.CapFundingRequest.Initiator) </dt>
                 <dd> @Html.DisplayFor(model => model.CapFundingRequest.Initiator) </dd>
-            </dl> 
-        </div> 
+            </dl>
+        </div>
     </div>
 
-    <div class="panel panel-default"> 
-        <div class="panel-heading">Quotes</div> 
-        <div class="panel-body"> 
-            @if (!Model.AttachedQuotes.Any())
-            { 
-            <p> 
-                No Quotes attached yet!
-            </p>
-            }
-            else
-            {
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Vendor Name</th>
-                            <th>Telephone #</th>
-                            <th>Contact Name</th>
-                            <th>Quote</th>
-                            <th>Date</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    @foreach (var item in Model.AttachedQuotes)
-                    {
-                        <tr>
-                            <td> @Html.DisplayFor(modelItem => item.VendorName) </td>
-                            <td> @Html.DisplayFor(modelItem => item.ContactNum) </td>
-                            <td> @Html.DisplayFor(modelItem => item.ContactName) </td>
-                            <td> @Html.DisplayFor(modelItem => item.QuoteAmt) </td>
-                            <td> @Html.DisplayFor(modelItem => item.QuoteDate) </td>
-                        </tr>
-                    }
-                    </tbody>
-                </table> 
-            } 
-
+    <div class="panel panel-default">
+        <div class="panel-heading">Quotes</div>
+        <div class="panel-body">
 
             <div class="form-group">
                 <label asp-for="AttachedQuote.VendorName" class="control-label col-md-2"></label>
                 <div class="col-md-2">
                     <input asp-for="AttachedQuote.VendorName" class="form-control" />
-                    <span asp-validation-for="AttachedQuote.VendorName" class="text-danger"></span> 
+                    <span asp-validation-for="AttachedQuote.VendorName" class="text-danger"></span>
                 </div>
             </div>
             <div class="form-group">
                 <label asp-for="AttachedQuote.ContactNum" class="control-label col-md-2"></label>
                 <div class="col-md-2">
                     <input asp-for="AttachedQuote.ContactNum" class="form-control" />
-                    <span asp-validation-for="AttachedQuote.ContactNum" class="text-danger"></span> 
+                    <span asp-validation-for="AttachedQuote.ContactNum" class="text-danger"></span>
                 </div>
             </div>
             <div class="form-group">
@@ -97,6 +64,25 @@
                     <span asp-validation-for="AttachedQuote.QuoteDate" class="text-danger"></span>
                 </div>
             </div>
+
+            <dl class="dl-horizontal">
+                <dt>Attached Documents</dt>
+                @if (!Model.QuoteAttachments.Any())
+                {
+                        <dd>No attached files submitted yet</dd>
+                }
+                else
+                {
+                    // Todo Not Working yet need to fix hyperlink
+                    @foreach (var files in Model.QuoteAttachments)
+                    {
+                        <dd>
+                            <a asp-action="GetFile" asp-route-id="@files.Id">@Html.DisplayFor(Model => files.FileName)</a>
+                        </dd>
+                    }
+                }
+            </dl>
+
             <div class="form-group">
                 <label class="control-label col-md-2">Id used for development purposes</label>
                 <div class="col-md-2">
@@ -105,25 +91,26 @@
             </div>
             <div class="form-group">
                 <div class="col-md-3">
-                    <p><strong>Upload one or more pdf files:</strong></p>
+                    <p><strong>Upload All supporting pdf files:</strong></p>
+                    <p><strong>Warning: Attached files will overwrite all previously attached files.</strong></p>
                     <input type="file" name="files" multiple />
                     <br />
                 </div>
-            </div> 
+            </div>
             <div class="form-group">
                 <div class="col-md-offset-2 col-md-10">
                     <input class="btn btn-primary" type="submit" value="Save" />
                 </div>
-            </div> 
+            </div>
         </div>
     </div>
 
-    <input type="hidden" asp-for="AttachedQuote.CapFundingRequestId" /> 
-    <input type="hidden" asp-for="CapFundingRequest.Id" /> 
+    <input type="hidden" asp-for="AttachedQuote.CapFundingRequestId" />
+    <input type="hidden" asp-for="CapFundingRequest.Id" />
     <input type="hidden" asp-for="CapFundingRequest.ProjectName" />
-    
-    <div> 
-        <a asp-action="Details" asp-route-id="@Model.CapFundingRequest.Id">Back To List</a> 
+
+    <div>
+        <a asp-action="Details" asp-route-id="@Model.CapFundingRequest.Id">Back To List</a>
     </div>
 </form>
 

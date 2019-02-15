@@ -20,7 +20,7 @@ namespace AppPortal.Controllers
         public FundingRequestController(FinanceContext context)
         {
             _context = context;
-        } 
+        }
         protected override void Dispose(bool disposing)
         {
             _context.Dispose();
@@ -53,11 +53,11 @@ namespace AppPortal.Controllers
         {
             if (id == null)
                 return NotFound();
-            CapFundingRequest request = await _context.CapFundingRequests.SingleOrDefaultAsync(r => r.Id == id); 
+            CapFundingRequest request = await _context.CapFundingRequests.SingleOrDefaultAsync(r => r.Id == id);
             if (request == null)
                 return NotFound();
 
-            var viewModel = new StaggeredCostViewModel
+            StaggeredCostViewModel viewModel = new StaggeredCostViewModel
             {
                 CapFundingRequest = request,
                 StaggeredCosts = _context.StaggeredCosts.Where(c => c.CapfundingRequestId == id)
@@ -76,29 +76,31 @@ namespace AppPortal.Controllers
             CapFundingRequest request = await _context.CapFundingRequests.SingleOrDefaultAsync(r => r.Id == id);
             if (request == null)
                 return NotFound();
-            var viewModel = new QuotesViewModel
+
+            FundingRequestViewModel viewModel = new FundingRequestViewModel
             {
                 CapFundingRequest = request,
                 AttachedQuote = new AttachedQuote(),
-                AttachedQuotes = _context.AttachedQuote.Where(q => q.CapFundingRequestId == id)
+                QuoteAttachments = await _context.QuoteAttachments.Where(a => a.AttachedQuoteId == id).ToListAsync()
             };
-            
+
             return View("QuoteForm",viewModel);
         }
+
         //Load the form for a new request
         public async Task<IActionResult> FundingRequestForm(Vw_DivisionMaster vw_DivisionMaster)
         {
 
             string programNum = vw_DivisionMaster.ProgramNo;
-            Vw_DivisionMaster programDetail = await _context.Vw_DivisionMaster.SingleOrDefaultAsync(p => p.ProgramNo == programNum); 
+            Vw_DivisionMaster programDetail = await _context.Vw_DivisionMaster.SingleOrDefaultAsync(p => p.ProgramNo == programNum);
 
             //check to make sure its a valid program
             if (programDetail == null)
             {
                 TempData["ErrorMessage"] = "Invalid program number entered";
                 return View("New");
-            } 
-            
+            }
+
             //Instatiate an empty CapFundingRequest and populate it
             CapFundingRequest request = new CapFundingRequest
             {
@@ -119,12 +121,15 @@ namespace AppPortal.Controllers
                 StaggeredCosts = _context.StaggeredCosts.Where(s => s.CapfundingRequestId == request.Id),
             };
 
-            return View(viewModel); 
+            return View(viewModel);
         }
         //**************************************************************************
         //End New Actions
-        //************************************************************************** 
+        //**************************************************************************
 
+        //**************************************************************************
+        //Start Edit Actions
+        //**************************************************************************
 
         public async Task<IActionResult> Edit(int id)
         {
@@ -152,35 +157,37 @@ namespace AppPortal.Controllers
 
         public async Task<IActionResult> EditQuote(int id)
         {
-            var quote = await _context.AttachedQuote.SingleOrDefaultAsync(q => q.Id == id);
-            var request = await _context.CapFundingRequests.SingleOrDefaultAsync(r => r.Id == quote.CapFundingRequestId);
+            AttachedQuote quote = await _context.AttachedQuote.SingleOrDefaultAsync(q => q.Id == id);
+            CapFundingRequest request = await _context.CapFundingRequests.SingleOrDefaultAsync(r => r.Id == quote.CapFundingRequestId);
             if (quote == null)
                 return NotFound();
             else
             {
-                var viewModel = new QuotesViewModel
+                FundingRequestViewModel viewModel = new FundingRequestViewModel
                 {
                     CapFundingRequest = request,
                     AttachedQuote = quote,
-                    AttachedQuotes = _context.AttachedQuote.Where(q => q.CapFundingRequestId == id)
+                    QuoteAttachments = await _context.QuoteAttachments.Where(a => a.AttachedQuoteId == id).ToListAsync()
                 };
                 return View("QuoteForm", viewModel);
-            } 
+            }
         }
-
+        //**************************************************************************
+        //End Edit Actions
+        //**************************************************************************
 
         //**************************************************************************
         //Start Save Actions
-        //************************************************************************** 
+        //**************************************************************************
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Save(FundingRequestViewModel capFunding) 
+        public async Task<IActionResult> Save(FundingRequestViewModel capFunding)
         {
             //instantiate the fundingrequest object
             CapFundingRequest objFundingRequest = capFunding.CapFundingRequest;
 
             if (objFundingRequest.ProjectName == "" || objFundingRequest.ProgramName == null)
-            { 
+            {
                 TempData["ErrorMessage"] = "Must have a Project/Purchase Name";
                 object getNewViewModel = await CreateViewModel(objFundingRequest);
                 return View("FundingRequestForm", getNewViewModel);
@@ -191,42 +198,42 @@ namespace AppPortal.Controllers
                 TempData["ErrorMessage"] = "You must choose at least one purchase reason";
                 object getNewViewModel = await CreateViewModel(objFundingRequest);
                 return View("FundingRequstForm", getNewViewModel);
-            } 
+            }
 
             if (objFundingRequest.AmtOtherSource > 0)
             {
                 if (objFundingRequest.OtherSourceExplain == "" || objFundingRequest.OtherSourceExplain == null)
                 {
-                    TempData["ErrorMessage"] = "You must provide an explanation when using other funding sources"; 
+                    TempData["ErrorMessage"] = "You must provide an explanation when using other funding sources";
                     object getNewViewModel = await CreateViewModel(objFundingRequest);
-                    return View("FundingRequestForm", getNewViewModel); 
+                    return View("FundingRequestForm", getNewViewModel);
                 }
+            }
+
+            //look up the assets information
+            string assetNum = objFundingRequest.AssetNum;
+            MunisVw_fa_master assetDetail = _context.MunisVw_Fa_Master.SingleOrDefault(a => a.a_asset_number == assetNum);
+
+            //if we have assets to replace then lets make sure the asset is real
+            if (objFundingRequest.ReplaceAsset == true)
+            {
+                if (assetDetail == null)
+                {
+                    TempData["ErrorMessage"] = "Invalid asset number entered";
+                    object getNewViewModel = await CreateViewModel(objFundingRequest);
+                    return View("FundingRequestForm", getNewViewModel);
+                }
+                //now that we have a valid asset lets populate the
+                //remaining items of the funding request object
+                objFundingRequest.AssetYear = assetDetail.fa_model_year;
+                objFundingRequest.Make = assetDetail.fm_manuf_code;
+                objFundingRequest.Serial = assetDetail.fa_serial_number;
+                objFundingRequest.AssetDesc = assetDetail.a_asset_desc;
             }
 
             //if this is a new request
             if (objFundingRequest.Id == 0)
             {
-                //if we have assets to replace then lets make sure the asset is real
-                if (objFundingRequest.ReplaceAsset == true)
-                {
-                    //look up the assets information
-                    string assetNum = objFundingRequest.AssetNum;
-                    MunisVw_fa_master assetDetail = _context.MunisVw_Fa_Master.SingleOrDefault(a => a.a_asset_number == assetNum);
-
-                    if (assetDetail == null)
-                    {
-                        TempData["ErrorMessage"] = "Invalid asset number entered"; 
-                        object getNewViewModel = await CreateViewModel(objFundingRequest);
-                        return View("FundingRequestForm", getNewViewModel);
-                    }
-                    //now that we have a valid asset lets populate the
-                    //remaining items of the funding request object
-                    objFundingRequest.AssetYear = assetDetail.fa_model_year;
-                    objFundingRequest.Make = assetDetail.fm_manuf_code;
-                    objFundingRequest.Serial = assetDetail.fa_serial_number;
-                    objFundingRequest.AssetDesc = assetDetail.a_asset_desc; 
-                }
-
 
                 //add together the funding amounts for a total
                 objFundingRequest.TotalCost = objFundingRequest.AmtRequest + objFundingRequest.AmtOtherSource;
@@ -245,7 +252,7 @@ namespace AppPortal.Controllers
                 requestInDb.DivLeadEmail = objFundingRequest.DivLeadEmail;
                 requestInDb.Initiator = objFundingRequest.Initiator;
                 requestInDb.TimeStamp = objFundingRequest.TimeStamp;
-                requestInDb.LastUpdate = System.DateTime.Now;
+                requestInDb.LastUpdate = DateTime.Now;
                 requestInDb.ProjectName = objFundingRequest.ProjectName;
                 requestInDb.ProjectOverview = objFundingRequest.ProjectOverview;
                 requestInDb.AmtRequest = objFundingRequest.AmtRequest;
@@ -260,16 +267,15 @@ namespace AppPortal.Controllers
                 requestInDb.AssetNum = objFundingRequest.AssetNum;
                 requestInDb.Serial = objFundingRequest.Serial;
                 requestInDb.AssetDesc = objFundingRequest.AssetDesc;
-                requestInDb.RequestStatus = objFundingRequest.RequestStatus;
-            } 
+                requestInDb.RequestStatus = "In Progress";
+            }
 
             await _context.SaveChangesAsync();
 
             object viewModel = await CreateViewModel(objFundingRequest);
- 
-            return View("FundingRequestReview", viewModel); 
 
-        } 
+            return View("FundingRequestReview", viewModel);
+        }
 
         [HttpPost]
         public async Task<IActionResult> FileUpload(FundingRequestViewModel request, List<IFormFile> files)
@@ -292,10 +298,10 @@ namespace AppPortal.Controllers
                 request.CapFundingRequest.ProjectName + "_" + request.CapFundingRequest.Id);
 
             //create directory by default if one already exists it will ignore the line
-            Directory.CreateDirectory(dir); 
+            Directory.CreateDirectory(dir);
             int requestId = request.CapFundingRequest.Id;
 
-            //Now its time to copy the files to the directory 
+            //Now its time to copy the files to the directory
             foreach (IFormFile formFile in files)
             {
                 //get file size to make sure one is there
@@ -314,19 +320,19 @@ namespace AppPortal.Controllers
                     };
                     await _context.FundingRequestAttachments.AddAsync(attachments);
                 }
-            } 
+            }
             await _context.SaveChangesAsync();
 
-            var objRequest = await _context.CapFundingRequests.SingleOrDefaultAsync(r => r.Id == requestId);
+            CapFundingRequest objRequest = await _context.CapFundingRequests.SingleOrDefaultAsync(r => r.Id == requestId);
 
             object viewModel = await CreateViewModel(objRequest);
 
-            return View("FundingRequestReview", viewModel); 
+            return View("FundingRequestReview", viewModel);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> SaveCost(StaggeredCostViewModel costViewModel) 
+        public async Task<IActionResult> SaveCost(StaggeredCostViewModel costViewModel)
         {
             StaggeredCost objStaggeredCost = costViewModel.StaggeredCost;
 
@@ -344,94 +350,149 @@ namespace AppPortal.Controllers
                 costInDb.Amount = costViewModel.StaggeredCost.Amount;
                 costInDb.AmtJustification = costViewModel.StaggeredCost.AmtJustification;
                 costInDb.DescOfActivity = costViewModel.StaggeredCost.DescOfActivity;
-                costInDb.CapfundingRequestId = costViewModel.StaggeredCost.CapfundingRequestId; 
-            } 
+                costInDb.CapfundingRequestId = costViewModel.StaggeredCost.CapfundingRequestId;
+            }
 
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Details), new { costViewModel.CapFundingRequest.Id }); 
-        } 
+            return RedirectToAction(nameof(Details), new { costViewModel.CapFundingRequest.Id });
+        }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> SaveQuote(QuotesViewModel quotesViewModel, IFormFile files)
+        public async Task<IActionResult> SaveQuote(FundingRequestViewModel request, List<IFormFile> files)
         {
+            int requestId = request.CapFundingRequest.Id;
             //Check if there is a file and if its in the right format
-            string ext = Path.GetExtension(files.FileName);
-            if (files.Length < 0 || ext != ".pdf")
+            if (files.Count > 0)
             {
-                TempData["ErrorMessage"] = "Files not in the correct format.";
-                return RedirectToAction(nameof(Details), new { quotesViewModel.CapFundingRequest.Id});
+                foreach (IFormFile formFile in files)
+                {
+                    string ext = Path.GetExtension(formFile.FileName);
+                    if (formFile.Length < 0 || ext != ".pdf")
+                    {
+                        TempData["ErrorMessage"] = "Files not in the correct format.";
+                        return RedirectToAction(nameof(Details), new { request.CapFundingRequest.Id});
+                    }
+                }
             }
 
-            //build path to folder to store file
-            string dir = Path.Combine("E:\\ApplicationDocuments\\FundingRequests\\Quotes\\",
-                quotesViewModel.CapFundingRequest.ProjectName + "_" + quotesViewModel.CapFundingRequest.Id);
-            //create the directory, this will only happen if one does not already exist
-            Directory.CreateDirectory(dir);
-            int requestId = quotesViewModel.CapFundingRequest.Id;
-
-            //get the filename and filepath to copy to filesystem
-            string fileName = Path.GetFileName(files.FileName);
-            string filePath = Path.Combine(dir, fileName);
-            using (FileStream stream = new FileStream(filePath, FileMode.Create))
-            {
-                await files.CopyToAsync(stream);
-            }
-
-            //now we write it to the database
-            AttachedQuote objAttachedQuote = quotesViewModel.AttachedQuote;
+            //write to the database now that we know
+            AttachedQuote objAttachedQuote = request.AttachedQuote;
             if (objAttachedQuote.Id == 0)
             {
-                objAttachedQuote.AttachedFileName = fileName;
-                objAttachedQuote.CapFundingRequestId = quotesViewModel.CapFundingRequest.Id;
-                objAttachedQuote.AttachedFileLocation = filePath;
+                objAttachedQuote.CapFundingRequestId = request.CapFundingRequest.Id;
                 await _context.AttachedQuote.AddAsync(objAttachedQuote);
+
+                if (files.Count > 0)
+                {
+                    await _context.SaveChangesAsync();
+                    AttachedQuote LastQuote = await _context.AttachedQuote.LastAsync();
+                    int quoteId = LastQuote.Id;
+                    //build path to folder to store file
+                    string dir = Path.Combine("E:\\ApplicationDocuments\\FundingRequests\\Quotes\\",
+                        request.CapFundingRequest.ProjectName);
+                    Directory.CreateDirectory(dir); //this only happens when the directory doesnt exist
+                    foreach (IFormFile formFile in files)
+                    {
+                        QuoteAttachments quoteAttachment = new QuoteAttachments
+                        {
+                            FileName = formFile.FileName,
+                            FileLocation = Path.Combine(dir, formFile.FileName),
+                            AttachedQuoteId = quoteId,
+                        };
+                        QuoteAttachments showMeTheQuoteAttachment = quoteAttachment;
+                        await _context.QuoteAttachments.AddAsync(quoteAttachment);
+                        UploadQuote(formFile, dir);
+                    }
+                }
+            }
+            else
+            {
+                AttachedQuote quoteInDb = await _context.AttachedQuote.SingleAsync(c => c.Id == objAttachedQuote.Id);
+
+                quoteInDb.VendorName = request.AttachedQuote.VendorName;
+                quoteInDb.ContactNum = request.AttachedQuote.ContactNum;
+                quoteInDb.ContactName = request.AttachedQuote.ContactName;
+                quoteInDb.QuoteAmt = request.AttachedQuote.QuoteAmt;
+                quoteInDb.QuoteDate = request.AttachedQuote.QuoteDate;
+
+                if (files.Count > 0)
+                {
+                    List<QuoteAttachments> attachmentInDb = await _context.QuoteAttachments.Where(a => a.AttachedQuoteId == quoteInDb.Id).ToListAsync();
+                    //first we will loop through the attachments and delete them
+                    foreach (var attachment in attachmentInDb)
+                    {
+                        if(attachment.FileLocation != null || attachment.FileLocation != "")
+                        {
+                            System.IO.File.Delete(attachment.FileLocation);
+                        }
+                        _context.QuoteAttachments.Remove(attachment);
+                    }
+                    //now that we have cleared it all lets upload the new attachments
+                    //build path to folder to store file
+                    string dir = Path.Combine("E:\\ApplicationDocuments\\FundingRequests\\Quotes\\",
+                        request.CapFundingRequest.ProjectName);
+                    Directory.CreateDirectory(dir); //this only happens when the directory doesnt exist
+                    foreach (IFormFile formFile in files)
+                    {
+                        QuoteAttachments quoteAttachment = new QuoteAttachments
+                        {
+                            FileName = formFile.FileName,
+                            FileLocation = Path.Combine(dir, formFile.FileName),
+                            AttachedQuoteId = quoteInDb.Id,
+                        };
+                        QuoteAttachments showMeTheQuoteAttachment = quoteAttachment;
+                        await _context.QuoteAttachments.AddAsync(quoteAttachment);
+                        UploadQuote(formFile, dir);
+                    }
+                }
             }
 
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Details), new { quotesViewModel.CapFundingRequest.Id });
+
+            return RedirectToAction(nameof(Details), new { request.CapFundingRequest.Id });
         }
 
         //**************************************************************************
         //End Save Actions
-        //************************************************************************** 
+        //**************************************************************************
         public async Task<IActionResult> SupportingDocuments(int? id)
         {
             if (id == null)
             {
-                return NotFound(); 
+                return NotFound();
             }
 
             CapFundingRequest request = await _context.CapFundingRequests.SingleOrDefaultAsync(r => r.Id == id);
 
             if (request == null)
             {
-                return NotFound(); 
+                return NotFound();
             }
 
-            var viewModel = await CreateViewModel(request);
+            object viewModel = await CreateViewModel(request);
 
             return View(viewModel);
-        } 
+        }
 
         public async Task<IActionResult> EditStagCost(int? id)
         {
             if (id == null)
-                return NotFound(); 
+                return NotFound();
             StaggeredCost staggeredCost = await _context.StaggeredCosts.SingleOrDefaultAsync(s => s.Id == id);
             CapFundingRequest request = await _context.CapFundingRequests.SingleOrDefaultAsync(r => r.Id == staggeredCost.CapfundingRequestId);
             //TempData["requestId"] = staggeredCost.CapfundingRequestId;
-            
+
             if (staggeredCost == null)
                 return NotFound();
             else
             {
-                var viewModel = new StaggeredCostViewModel
+                StaggeredCostViewModel viewModel = new StaggeredCostViewModel
                 {
                     CapFundingRequest = request,
                     StaggeredCost = staggeredCost,
-                    StaggeredCosts = _context.StaggeredCosts.Where(c => c.CapfundingRequestId == staggeredCost.CapfundingRequestId)
-                        .OrderBy(c => c.FiscalYear).ToList()
+                    StaggeredCosts = await _context.StaggeredCosts.Where(c => c.CapfundingRequestId == staggeredCost.CapfundingRequestId)
+                        .OrderBy(c => c.FiscalYear).ToListAsync()
                 };
 
                 return View("StaggeredCostForm", viewModel);
@@ -454,7 +515,7 @@ namespace AppPortal.Controllers
                 return NotFound();
             }
 
-            return View(staggeredCost); 
+            return View(staggeredCost);
         }
 
         // POST: StaggeredCost/Delete/
@@ -463,7 +524,7 @@ namespace AppPortal.Controllers
         public async Task<IActionResult> DeleteStagCost(int id)
         {
             StaggeredCost staggeredCost = await _context.StaggeredCosts.FirstOrDefaultAsync(s => s.Id == id);
-            //get the parent object so we can redirect to the  
+            //get the parent object so we can redirect to the
             //appropriate view since it errors out on a redirect to action
             CapFundingRequest request = await _context.CapFundingRequests.SingleOrDefaultAsync(r => r.Id == staggeredCost.CapfundingRequestId);
 
@@ -472,10 +533,8 @@ namespace AppPortal.Controllers
 
             object viewModel = await CreateViewModel(request);
 
-            return View("FundingRequestReview", viewModel); 
+            return View("FundingRequestReview", viewModel);
         }
-
-
 
         // GET: CapFundingRequest/Delete/5
         public async Task<IActionResult> Withdraw(int? id)
@@ -494,7 +553,7 @@ namespace AppPortal.Controllers
             }
 
             return View(request);
-        } 
+        }
 
         // POST: CapFundingRequest/Delete/5
         [HttpPost, ActionName("Delete")]
@@ -554,7 +613,7 @@ namespace AppPortal.Controllers
         public async Task<IActionResult> DeleteQuote(int? id)
         {
             if (id == null)
-                return NotFound(); 
+                return NotFound();
 
             AttachedQuote attachment = await _context.AttachedQuote
                 .SingleOrDefaultAsync(q => q.Id == id);
@@ -564,24 +623,28 @@ namespace AppPortal.Controllers
 
             return View(attachment);
         }
- 
+
         [HttpPost, ActionName("DeleteQuoteConfirmed")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteQuoteConfirmed(int id)
         {
+            //grab everthing we need from the database
             AttachedQuote quote = await _context.AttachedQuote.SingleOrDefaultAsync(q => q.Id == id);
-            //hold onto the parent request id so we can redirect to the correct form
             CapFundingRequest request = await _context.CapFundingRequests.SingleOrDefaultAsync(r => r.Id == quote.CapFundingRequestId);
-            //get the location of the file to delete
-            string fileLocation = quote.AttachedFileLocation;
+            List<QuoteAttachments> attachments = await _context.QuoteAttachments.Where(a => a.AttachedQuoteId == id).ToListAsync();
 
-            if (fileLocation != null || fileLocation != "")
+            foreach(var attachment in attachments)
             {
-                System.IO.File.Delete(fileLocation); 
+                if (attachment.FileLocation != null || attachment.FileLocation != "")
+                {
+                    System.IO.File.Delete(attachment.FileLocation);
+                }
+                _context.QuoteAttachments.Remove(attachment);
             }
+
             _context.AttachedQuote.Remove(quote);
             await _context.SaveChangesAsync();
- 
+
             object getNewViewModel = await CreateViewModel(request);
 
             return View("FundingRequestReview", getNewViewModel);
@@ -592,8 +655,23 @@ namespace AppPortal.Controllers
         public IActionResult GetFile(int id)
         {
             FundingRequestAttachments file = _context.FundingRequestAttachments.Single(f => f.Id == id);
-            return new PhysicalFileResult(file.FileLocation, "Application/pdf"); 
+            return new PhysicalFileResult(file.FileLocation, "Application/pdf");
         }
+        //**************************************************************************
+        //File Upload helper funcion
+        //**************************************************************************
+        public void UploadQuote(IFormFile files, string dir)
+        {
+            string fileName = Path.GetFileName(files.FileName);
+            string filePath = Path.Combine(dir, fileName);
+            using (FileStream stream = new FileStream(filePath, FileMode.Create))
+            {
+                files.CopyToAsync(stream);
+            }
+        }
+        //**************************************************************************
+        //End File Upload helper funcion
+        //**************************************************************************
 
         //**************************************************************************
         //ViewModel Creation helper funcion
@@ -607,29 +685,29 @@ namespace AppPortal.Controllers
                 FundingRequestViewModel viewModel = new FundingRequestViewModel
                 {
                     CapFundingRequest = fundingRequest,
-                    FundingRequestAttachments = _context.FundingRequestAttachments
-                        .Where(a => a.CapFundingRequestId == fundingRequest.Id).ToList(),
-                    StaggeredCosts = _context.StaggeredCosts
+                    FundingRequestAttachments = await _context.FundingRequestAttachments
+                        .Where(a => a.CapFundingRequestId == fundingRequest.Id).ToListAsync(),
+                    StaggeredCosts = await _context.StaggeredCosts
                         .Where(c => c.CapfundingRequestId == fundingRequest.Id)
-                        .OrderBy(c => c.FiscalYear).ToList(),
-                    AttachedQuotes = _context.AttachedQuote
-                        .Where(q => q.CapFundingRequestId == fundingRequest.Id).ToList(),
+                        .OrderBy(c => c.FiscalYear).ToListAsync(),
+                    AttachedQuotes = await _context.AttachedQuote
+                        .Where(q => q.CapFundingRequestId == fundingRequest.Id).ToListAsync(),
                 };
                 return viewModel;
             }
             else
             {
-                var objRequest = await _context.CapFundingRequests.SingleOrDefaultAsync(r => r.Id == fundingRequest.Id);
+                CapFundingRequest objRequest = await _context.CapFundingRequests.SingleOrDefaultAsync(r => r.Id == fundingRequest.Id);
                 FundingRequestViewModel viewModel = new FundingRequestViewModel
                 {
                     CapFundingRequest = objRequest,
-                    FundingRequestAttachments = _context.FundingRequestAttachments
-                        .Where(a => a.CapFundingRequestId == objRequest.Id).ToList(),
-                    StaggeredCosts = _context.StaggeredCosts
+                    FundingRequestAttachments = await _context.FundingRequestAttachments
+                        .Where(a => a.CapFundingRequestId == objRequest.Id).ToListAsync(),
+                    StaggeredCosts = await _context.StaggeredCosts
                         .Where(c => c.CapfundingRequestId == objRequest.Id)
-                        .OrderBy(c => c.FiscalYear).ToList(),
-                    AttachedQuotes = _context.AttachedQuote
-                        .Where(q => q.CapFundingRequestId == fundingRequest.Id).ToList(),
+                        .OrderBy(c => c.FiscalYear).ToListAsync(),
+                    AttachedQuotes = await _context.AttachedQuote
+                        .Where(q => q.CapFundingRequestId == fundingRequest.Id).ToListAsync(),
                 };
                 return viewModel;
             }

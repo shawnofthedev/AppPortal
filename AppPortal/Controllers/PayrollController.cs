@@ -11,7 +11,7 @@ using System.IO;
 
 namespace AppPortal.Controllers
 {
-    public class PayrollController : Controller 
+    public class PayrollController : Controller
     {
         //**************************************************************************
         //DB context stuff
@@ -19,16 +19,16 @@ namespace AppPortal.Controllers
         private readonly FinanceContext _context;
         public PayrollController(FinanceContext context)
         {
-            _context = context; 
+            _context = context;
         }
         protected override void Dispose(bool disposing)
         {
-            _context.Dispose(); 
+            _context.Dispose();
         }
         //**************************************************************************
         //End db context
         //**************************************************************************
- 
+
 
         public IActionResult Index()
         {
@@ -43,10 +43,10 @@ namespace AppPortal.Controllers
 
         //get applicable employee information based on emp ID
         public IActionResult Query(MunisVw_EmployeeMaster munisVw_EmployeeMaster)
-        { 
-            //lets populate some variable to be used in error checking 
+        {
+            //lets populate some variable to be used in error checking
             int empNum = munisVw_EmployeeMaster.EmployeeNumber;
-            int currentFy = GetFyYear(); //lets use the function that returns the current fiscal year 
+            int currentFy = GetFyYear(); //lets use the function that returns the current fiscal year
             var currentPayDate = GetPayPeriodEndDate().Date;
 
 
@@ -56,13 +56,13 @@ namespace AppPortal.Controllers
             //check if employee exist and is active
             if (employee == null || employee.ActiveStatusCode == "I")
             {
-                TempData["ErrorMessage"] = "Invalid employee number entered"; 
+                TempData["ErrorMessage"] = "Invalid employee number entered";
                 return RedirectToAction("LeaveBuyBack", "Payroll");
             }
 
             //lets get all the request of that employee so we can check if they have requested two this fiscal year
-            List<LeaveBuyBackRequest> getAllRequests = _context.LeaveBuyBackRequest.Where(m => m.EmpNum == empNum).ToList(); 
-            
+            List<LeaveBuyBackRequest> getAllRequests = _context.LeaveBuyBackRequest.Where(m => m.EmpNum == empNum).ToList();
+
             //now we count up how many request that employee has made this pay period and fiscal year
             int requestCount = getAllRequests.Where(m => m.FiscalYear == currentFy).Count();
             int payPeriodRequestCount = getAllRequests.Where(m => m.PayPeriodEnd == currentPayDate).Count();
@@ -74,7 +74,7 @@ namespace AppPortal.Controllers
                 //return RedirectToAction("LeaveBuyBack", "Payroll");
                 return Redirect("LeaveBuyBack");
             }
-               
+
             //lets not allow a request to be made if they have 2 this year
             if (requestCount >= 2)
             {
@@ -84,7 +84,7 @@ namespace AppPortal.Controllers
 
 
             //get employees leave balance
-            MunisVw_EmployeeAnnual annual = _context.MunisVw_EmployeeAnnual.SingleOrDefault(h => h.EmployeeNumber == empNum); 
+            MunisVw_EmployeeAnnual annual = _context.MunisVw_EmployeeAnnual.SingleOrDefault(h => h.EmployeeNumber == empNum);
             decimal hoursAvailable = Convert.ToDecimal(annual.AnnualAvailable);
             if (hoursAvailable < 120)
             {
@@ -93,7 +93,7 @@ namespace AppPortal.Controllers
             }
 
             //build employees full name
-            string fullName = employee.FirstName.Trim(); 
+            string fullName = employee.FirstName.Trim();
             if (employee.MI.Trim() != "")
             {
                 fullName += " " + employee.MI.Trim() + " " + employee.LastName.Trim();
@@ -169,11 +169,11 @@ namespace AppPortal.Controllers
 
         public IActionResult BuyBackReport()
         {
-            if (User.Identity.Name.Remove(0, 5) == "shawvota" 
-                || User.Identity.Name.Remove(0, 5) == "junewalk" 
-                || User.Identity.Name.Remove(0, 5) == "DEVOPHEA" 
-                || User.Identity.Name.Remove(0, 5) == "alexarma" 
-                || User.Identity.Name.Remove(0, 5) == "SUSIWOLF" 
+            if (User.Identity.Name.Remove(0, 5) == "shawvota"
+                || User.Identity.Name.Remove(0, 5) == "junewalk"
+                || User.Identity.Name.Remove(0, 5) == "DEVOPHEA"
+                || User.Identity.Name.Remove(0, 5) == "alexarma"
+                || User.Identity.Name.Remove(0, 5) == "SUSIWOLF"
                 || User.Identity.Name.Remove(0, 5) == "angevota")
             {
                 //grab a list of all requests
@@ -193,7 +193,7 @@ namespace AppPortal.Controllers
                 return RedirectToAction("Error", "Home");
             }
 
-        } 
+        }
         public IActionResult ReportViewer(BuyBackRequestViewModel PayDate)
         {
             var queryDate = PayDate.LeaveBuyBackRequests.Single();
@@ -233,7 +233,7 @@ namespace AppPortal.Controllers
                 return DateTime.Now.AddDays(10 - daysToEndPeriod).Date;
             }
         }
- 
+
         //gets the current fiscal year
         public static int GetFyYear()
         {
@@ -247,9 +247,9 @@ namespace AppPortal.Controllers
             {
                 return year;
             }
-        } 
+        }
         //**************************************************************************
         //End Section
-        //************************************************************************** 
+        //**************************************************************************
     }
 }

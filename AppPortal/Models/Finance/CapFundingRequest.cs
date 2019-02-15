@@ -21,9 +21,9 @@ namespace AppPortal.Models
         [Display(Name = "Program Name")]
         public string ProgramName { get; set; }
 
-        //These titles of these could change over time so 
+        //These titles of these could change over time so
         //divlead was chosen.  To change the display name
-        //change the string in quotes 
+        //change the string in quotes
         [Display(Name = "Secretary")]
         public string DivLead { get; set; }
 
@@ -87,7 +87,7 @@ namespace AppPortal.Models
 
         public IEnumerable<StaggeredCost> StaggeredCosts { get; set; }
 
-        public IEnumerable<AttachedQuote> AttachedQuotes { get; set; } 
+        public IEnumerable<AttachedQuote> AttachedQuotes { get; set; }
     }
 
     public class FundingRequestAttachments
@@ -95,7 +95,7 @@ namespace AppPortal.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
- 
+
         public string FileName { get; set; }
 
         public string FileLocation { get; set; }
@@ -126,14 +126,14 @@ namespace AppPortal.Models
 
         public int CapfundingRequestId { get; set; }
 
-    } 
+    }
 
-    public class AttachedQuote 
+    public class AttachedQuote
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
- 
+
         [Display(Name = "Vendor Name")]
         public string VendorName { get; set; }
 
@@ -152,12 +152,25 @@ namespace AppPortal.Models
         [DataType(DataType.Date)]
         public DateTime? QuoteDate { get; set; }
 
-        public string AttachedFileName { get; set; }
-
-        public string AttachedFileLocation { get; set; }
-
         public CapFundingRequest CapFundingRequest { get; set; }
 
-        public int CapFundingRequestId { get; set; } 
+        public int CapFundingRequestId { get; set; }
+
+        public IEnumerable<QuoteAttachments> QuoteAttachments { get; set; }
     }
+
+    public class QuoteAttachments
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
+
+        public string FileName { get; set; }
+
+        public string  FileLocation { get; set; }
+
+        public AttachedQuote AttachedQuote { get; set; }
+
+        public int AttachedQuoteId { get; set; }
+ }
 }

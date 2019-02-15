@@ -7,34 +7,34 @@
 <h3>Funding Request</h3>
 
 <hr />
-<form asp-action="SaveCost" method="post" enctype="multipart/form-data" class="form-horizontal"> 
- 
+<form asp-action="SaveCost" method="post" enctype="multipart/form-data" class="form-horizontal">
+
     <div class="panel panel-default">
-        <div class="panel-heading">Program Information</div> 
+        <div class="panel-heading">Program Information</div>
         <div class="panel-body">
-            <dl class="dl-horizontal"> 
+            <dl class="dl-horizontal">
                 <dt> @Html.DisplayNameFor(model => model.CapFundingRequest.DivisionName) </dt>
-                <dd> @Html.DisplayFor(model => model.CapFundingRequest.DivisionName) </dd> 
+                <dd> @Html.DisplayFor(model => model.CapFundingRequest.DivisionName) </dd>
                 <dt> @Html.DisplayNameFor(model => model.CapFundingRequest.ProgramName) </dt>
-                <dd> @Html.DisplayFor(model => model.CapFundingRequest.ProgramName) </dd> 
+                <dd> @Html.DisplayFor(model => model.CapFundingRequest.ProgramName) </dd>
                 <dt> @Html.DisplayNameFor(model => model.CapFundingRequest.DivLead) </dt>
-                <dd> @Html.DisplayFor(model => model.CapFundingRequest.DivLead) </dd> 
+                <dd> @Html.DisplayFor(model => model.CapFundingRequest.DivLead) </dd>
                 <dt> @Html.DisplayNameFor(model => model.CapFundingRequest.Initiator) </dt>
                 <dd> @Html.DisplayFor(model => model.CapFundingRequest.Initiator) </dd>
-            </dl> 
-        </div> 
+            </dl>
+        </div>
     </div>
 
-    <div class="panel panel-default"> 
-        <div class="panel-heading">Staggering Project Costs</div> 
-        <div class="panel-body"> 
+    <div class="panel panel-default">
+        <div class="panel-heading">Staggering Project Costs</div>
+        <div class="panel-body">
             <dl class="dl-horizontal">
                 <dt>@Html.DisplayNameFor(model => model.CapFundingRequest.TotalCost)</dt>
                 <dd>@Html.DisplayFor(model => model.CapFundingRequest.TotalCost)</dd>
             </dl>
             @if (!Model.StaggeredCosts.Any())
-            { 
-            <p> 
+            {
+            <p>
                 No Project Costs Entered Yet!
             </p>
             }
@@ -60,22 +60,21 @@
                         </tr>
                     }
                     </tbody>
-                </table> 
-            } 
-
+                </table>
+            }
 
             <div class="form-group">
                 <label asp-for="StaggeredCost.FiscalYear" class="control-label col-md-2"></label>
                 <div class="col-md-2">
                     <input asp-for="StaggeredCost.FiscalYear" class="form-control" />
-                    <span asp-validation-for="StaggeredCost.FiscalYear" class="text-danger"></span> 
+                    <span asp-validation-for="StaggeredCost.FiscalYear" class="text-danger"></span>
                 </div>
             </div>
             <div class="form-group">
                 <label asp-for="StaggeredCost.Amount" class="control-label col-md-2"></label>
                 <div class="col-md-2">
                     <input asp-for="StaggeredCost.Amount" class="form-control" />
-                    <span asp-validation-for="StaggeredCost.Amount" class="text-danger"></span> 
+                    <span asp-validation-for="StaggeredCost.Amount" class="text-danger"></span>
                 </div>
             </div>
             <div class="form-group">
@@ -106,13 +105,13 @@
 
     <div class="form-group">
         <div class="col-md-offset-2 col-md-10">
-            <input type="submit" value="Save" class="btn btn-primary" /> 
+            <input type="submit" value="Save" class="btn btn-primary" />
         </div>
     </div>
-    <div> 
-        <a asp-action="Details" asp-route-id="@Model.CapFundingRequest.Id">Back To List</a> 
+    <div>
+        <a asp-action="Details" asp-route-id="@Model.CapFundingRequest.Id">Back To List</a>
     </div>
- 
+
     <input type="hidden" asp-for="CapFundingRequest.Id" />
 </form>
 
