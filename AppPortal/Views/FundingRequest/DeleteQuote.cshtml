@@ -24,7 +24,7 @@
 
         <dt> @Html.DisplayNameFor(model => model.QuoteAmt) </dt>
         <dd> @Html.DisplayFor(model => model.QuoteAmt) </dd>
-        
+
         <dt> @Html.DisplayNameFor(model => model.QuoteDate) </dt>
         <dd> @Html.DisplayFor(model => model.QuoteDate) </dd>
 
@@ -32,12 +32,12 @@
         <dd> @Html.DisplayFor(model => model.AttachedFileName) </dd>
 
         <dt> @Html.DisplayNameFor(model => model.AttachedFileLocation) </dt>
-        <dd> @Html.DisplayFor(model => model.AttachedFileLocation) </dd>*@ 
-        
+        <dd> @Html.DisplayFor(model => model.AttachedFileLocation) </dd>*@
+
         @*<dt> @Html.DisplayNameFor(model => model.CapFundingRequestId) </dt>
-        <dd> @Html.DisplayFor(model => model.CapFundingRequestId) </dd>*@ 
+        <dd> @Html.DisplayFor(model => model.CapFundingRequestId) </dd>*@
     </dl>
-    
+
     <form asp-action="DeleteQuoteConfirmed">
         <input type="hidden" asp-for="Id" />
         <input type="submit" value="Delete" class="btn btn-primary" />

@@ -4,7 +4,7 @@
     ViewData["Title"] = "ProgramsList";
 }
 
-<h2>ProgramsList</h2>
+<h3>ProgramsList</h3>
 
 <p>
     <a asp-action="CreateProgram">Create New</a>
@@ -12,46 +12,26 @@
 <table class="table">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.FundFunctProg)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ProgramNum)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ProgramName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Division.DivisionName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Analyst.AnalystName)
-            </th>
+            <th> @Html.DisplayNameFor(model => model.FundFunctProg) </th>
+            <th> @Html.DisplayNameFor(model => model.ProgramNum) </th>
+            <th> @Html.DisplayNameFor(model => model.ProgramName) </th>
+            <th> @Html.DisplayNameFor(model => model.Division.DivisionName) </th>
+            <th> @Html.DisplayNameFor(model => model.Analyst.AnalystName) </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
 @foreach (var item in Model) {
         <tr>
+            <td> @Html.DisplayFor(modelItem => item.FundFunctProg) </td>
+            <td> @Html.DisplayFor(modelItem => item.ProgramNum) </td>
+            <td> @Html.DisplayFor(modelItem => item.ProgramName) </td>
+            <td> @Html.DisplayFor(modelItem => item.Division.DivisionName) </td>
+            <td> @Html.DisplayFor(modelItem => item.Analyst.AnalystName) </td>
             <td>
-                @Html.DisplayFor(modelItem => item.FundFunctProg)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ProgramNum)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ProgramName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Division.DivisionName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Analyst.AnalystName)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="ProgramDetails" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                <a asp-action="EditProgram" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="ProgramDetails" asp-route-id="@item.Id">Details</a>
+                @*<a asp-action="Delete" asp-route-id="@item.Id">Delete</a>*@
             </td>
         </tr>
 }

@@ -10,7 +10,11 @@ namespace AppPortal.ViewModels
     {
         public OrgChart OrgChart { get; set; }
 
+        public Division Division { get; set; }
+
         public IEnumerable<Division> Divisions { get; set; }
+
+        public IEnumerable<DivLead> Leads { get; set; }
 
         public IEnumerable<Analyst> Analysts { get; set; }
     }
