@@ -66,11 +66,6 @@ namespace AppPortal.Models
         [Display(Name = "Replace Existing Asset")]
         public bool ReplaceAsset { get; set; }
 
-        [Display(Name = "Year")]
-        public Int16 AssetYear { get; set; }
-
-        public string Make { get; set; }
-
         [Display(Name = "EBCI Tag")]
         public string AssetNum { get; set; }
 

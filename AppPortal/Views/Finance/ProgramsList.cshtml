@@ -4,10 +4,11 @@
     ViewData["Title"] = "ProgramsList";
 }
 
-<h3>ProgramsList</h3>
+<h3>Programs List</h3>
 
 <p>
-    <a asp-action="CreateProgram">Create New</a>
+    <a asp-action="ProgramCreate">Create New</a> |
+    <a asp-action="Index">Return To Menu</a>
 </p>
 <table class="table">
     <thead>
@@ -29,9 +30,9 @@
             <td> @Html.DisplayFor(modelItem => item.Division.DivisionName) </td>
             <td> @Html.DisplayFor(modelItem => item.Analyst.AnalystName) </td>
             <td>
-                <a asp-action="EditProgram" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="ProgramDetails" asp-route-id="@item.Id">Details</a>
-                @*<a asp-action="Delete" asp-route-id="@item.Id">Delete</a>*@
+                <a asp-action="ProgramDetails" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="ProgramEdit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="ProgramDelete" asp-route-id="@item.Id">Delete</a>
             </td>
         </tr>
 }

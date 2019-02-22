@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -9,10 +10,13 @@ namespace AppPortal.Models.Finance
     {
         public int Id { get; set; }
 
+        [Display(Name = "Fund.Funct.Prog")]
         public string FundFunctProg { get; set; }
 
+        [Display(Name = "Program Number")]
         public string ProgramNum { get; set; }
 
+        [Display(Name = "Program Name")]
         public string ProgramName { get; set; }
 
         public Division Division { get; set; }
@@ -28,8 +32,10 @@ namespace AppPortal.Models.Finance
     {
         public int Id { get; set; }
 
+        [Display(Name = "Division Name")]
         public string DivisionName { get; set; }
 
+        [Display(Name = "Secretary")]
         public DivLead DivLead { get; set; }
 
         public int DivLeadId { get; set; }
@@ -39,8 +45,11 @@ namespace AppPortal.Models.Finance
     {
         public int Id { get; set; }
 
+
+        [Display(Name = "Secretary Name")]
         public string DivLeadName { get; set; }
 
+        [Display(Name = "Secretary Email")]
         public string DivLeadEmail { get; set; }
     }
 
@@ -48,8 +57,10 @@ namespace AppPortal.Models.Finance
     {
         public int Id { get; set; }
 
+        [Display(Name = "Financial Analyst")]
         public string AnalystName { get; set; }
 
+        [Display(Name = "Analyst Email")]
         public string AnalystEmail { get; set; }
     }
 }

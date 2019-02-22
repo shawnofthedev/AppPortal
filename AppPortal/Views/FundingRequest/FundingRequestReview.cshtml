@@ -12,11 +12,11 @@
 @*<h4 style="color:red">@TempData["ErrorMessage"]</h4>
 <h4 style="color:green">@ViewData["Success"]</h4>*@
 
-<form asp-action="Quotes" method="post" class="form-horizontal"> 
-    
+<form asp-action="Quotes" method="post" class="form-horizontal">
+
     <div class="panel panel-default">
         <div class="panel-heading">Program Information</div>
-        <div class="panel-body"> 
+        <div class="panel-body">
             <dl class="dl-horizontal">
                 <dt> @Html.DisplayNameFor(model => model.CapFundingRequest.DivisionName) </dt>
                 <dd> @Html.DisplayFor(model => model.CapFundingRequest.DivisionName) </dd>
@@ -29,22 +29,22 @@
             </dl>
         </div>
     </div>
-    
+
     <div class="panel panel-default">
-        <div class="panel-heading">Project/Purchase Overview</div> 
+        <div class="panel-heading">Project/Purchase Overview</div>
         <div class="panel-body">
-            <dl class="dl-horizontal"> 
+            <dl class="dl-horizontal">
                 <dt> @Html.DisplayNameFor(model => model.CapFundingRequest.ProjectName) </dt>
-                <dd> @Html.DisplayFor(model => model.CapFundingRequest.ProjectName) </dd> 
+                <dd> @Html.DisplayFor(model => model.CapFundingRequest.ProjectName) </dd>
                 <dt> @Html.DisplayNameFor(model => model.CapFundingRequest.ProjectOverview) </dt>
-                <dd> @Html.DisplayFor(model => model.CapFundingRequest.ProjectOverview) </dd> 
+                <dd> @Html.DisplayFor(model => model.CapFundingRequest.ProjectOverview) </dd>
                 <dt> @Html.DisplayNameFor(model => model.CapFundingRequest.OneTimePurchase) </dt>
                 @if (Model.CapFundingRequest.OneTimePurchase == true)
                 {
                     <dd>True</dd>
                 }
                 else
-                { 
+                {
                     <dd>False</dd>
                 }
                 <dt> @Html.DisplayNameFor(model => model.CapFundingRequest.RecurringNeed) </dt>
@@ -53,56 +53,52 @@
                     <dd>True</dd>
                 }
                 else
-                { 
+                {
                     <dd>False</dd>
                 }
                 <dt> @Html.DisplayNameFor(model => model.CapFundingRequest.ReplaceAsset) </dt>
                 @if (Model.CapFundingRequest.ReplaceAsset == true)
                 {
                     <dd>True</dd>
-                } 
+                }
                 else
-                { 
+                {
                     <dd>False</dd>
                 }
                 @if (Model.CapFundingRequest.ReplaceAsset == true)
                 {
-                    <dt> @Html.DisplayNameFor(model => model.CapFundingRequest.AssetYear) </dt>
-                    <dd> @Html.DisplayFor(model => model.CapFundingRequest.AssetYear) </dd> 
-                    <dt> @Html.DisplayNameFor(model => model.CapFundingRequest.Make) </dt>
-                    <dd> @Html.DisplayFor(model => model.CapFundingRequest.Make) </dd> 
                     <dt> @Html.DisplayNameFor(model => model.CapFundingRequest.AssetNum) </dt>
-                    <dd> @Html.DisplayFor(model => model.CapFundingRequest.AssetNum) </dd> 
+                    <dd> @Html.DisplayFor(model => model.CapFundingRequest.AssetNum) </dd>
                     <dt> @Html.DisplayNameFor(model => model.CapFundingRequest.Serial) </dt>
-                    <dd> @Html.DisplayFor(model => model.CapFundingRequest.Serial) </dd> 
+                    <dd> @Html.DisplayFor(model => model.CapFundingRequest.Serial) </dd>
                     <dt> @Html.DisplayNameFor(model => model.CapFundingRequest.AssetDesc) </dt>
-                    <dd> @Html.DisplayFor(model => model.CapFundingRequest.AssetDesc) </dd> 
+                    <dd> @Html.DisplayFor(model => model.CapFundingRequest.AssetDesc) </dd>
                 }
-            </dl> 
-        </div> 
+            </dl>
+        </div>
     </div>
 
     <div class="panel panel-default">
-        <div class="panel-heading">Budget Overview</div> 
+        <div class="panel-heading">Budget Overview</div>
         <div class="panel-body">
             <dl class="dl-horizontal">
                 <dt> @Html.DisplayNameFor(model => model.CapFundingRequest.AmtRequest) </dt>
-                <dd> @Html.DisplayFor(model => model.CapFundingRequest.AmtRequest) </dd> 
-                
+                <dd> @Html.DisplayFor(model => model.CapFundingRequest.AmtRequest) </dd>
+
                 <dt> @Html.DisplayNameFor(model => model.CapFundingRequest.AmtOtherSource) </dt>
-                <dd> @Html.DisplayFor(model => model.CapFundingRequest.AmtOtherSource) </dd> 
- 
+                <dd> @Html.DisplayFor(model => model.CapFundingRequest.AmtOtherSource) </dd>
+
                 <dt> @Html.DisplayNameFor(model => model.CapFundingRequest.TotalCost) </dt>
-                <dd> @Html.DisplayFor(model => model.CapFundingRequest.TotalCost) </dd> 
-                
+                <dd> @Html.DisplayFor(model => model.CapFundingRequest.TotalCost) </dd>
+
                 <dt> @Html.DisplayNameFor(model => model.CapFundingRequest.OtherSourceExplain) </dt>
-                <dd> @Html.DisplayFor(model => model.CapFundingRequest.OtherSourceExplain) </dd> 
-            </dl> 
+                <dd> @Html.DisplayFor(model => model.CapFundingRequest.OtherSourceExplain) </dd>
+            </dl>
             <dl class="dl-horizontal">
                 <dt>Files</dt>
                 @if (!Model.FundingRequestAttachments.Any())
                 {
-                        <dd>No supporting files submitted yet</dd> 
+                        <dd>No supporting files submitted yet</dd>
                 }
                 else
                 {
@@ -112,21 +108,21 @@
                         <dd>
                             <a asp-action="GetFile" asp-route-id="@files.Id">@Html.DisplayFor(Model => files.FileName)</a>
                         </dd>
-                    } 
-                } 
+                    }
+                }
             </dl>
-             <div class="col-md-offset-2 col-md-10"> 
-                 <a class="btn btn-primary" asp-action="SupportingDocuments" asp-route-id="@Model.CapFundingRequest.Id">Manage supporting Documents</a> 
+             <div class="col-md-offset-2 col-md-10">
+                 <a class="btn btn-primary" asp-action="SupportingDocuments" asp-route-id="@Model.CapFundingRequest.Id">Manage supporting Documents</a>
              </div>
-        </div> 
-    </div> 
- 
-    <div class="panel panel-default"> 
-        <div class="panel-heading">Staggering Project Costs</div> 
-        <div class="panel-body"> 
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">Staggering Project Costs</div>
+        <div class="panel-body">
         @if (!Model.StaggeredCosts.Any())
-        { 
-        <p> 
+        {
+        <p>
             No Project Costs Entered Yet!
         </p>
         }
@@ -157,20 +153,20 @@
                     </tr>
                 }
                 </tbody>
-            </table> 
-        } 
-            <div class="col-md-offset-2 col-md-10"> 
-                <a class="btn btn-primary" asp-action="NewCost" asp-route-id="@Model.CapFundingRequest.Id" >Add a staggered cost</a> 
+            </table>
+        }
+            <div class="col-md-offset-2 col-md-10">
+                <a class="btn btn-primary" asp-action="NewCost" asp-route-id="@Model.CapFundingRequest.Id" >Add a staggered cost</a>
             </div>
-        </div> 
+        </div>
     </div>
 
-    <div class="panel panel-default"> 
-        <div class="panel-heading">Quotes</div> 
-        <div class="panel-body"> 
+    <div class="panel panel-default">
+        <div class="panel-heading">Quotes</div>
+        <div class="panel-body">
             @if (!Model.AttachedQuotes.Any())
-            { 
-            <p> 
+            {
+            <p>
                 No Quotes attached yet!
             </p>
             }
@@ -198,23 +194,23 @@
                             <td> @Html.DisplayFor(modelItem => item.QuoteDate) </td>
                             <td>
                                 <a asp-action="EditQuote" asp-route-id="@item.Id">Edit</a> |
-                                <a asp-action="DeleteQuote" asp-route-id="@item.Id">Remove</a> 
+                                <a asp-action="DeleteQuote" asp-route-id="@item.Id">Remove</a>
                             </td>
                         </tr>
                     }
                     </tbody>
-                </table> 
-            } 
-            <div class="col-md-offset-2 col-md-10"> 
-                <a class="btn btn-primary" asp-action="NewQuote" asp-route-id="@Model.CapFundingRequest.Id" >Add a vendor quote</a> 
+                </table>
+            }
+            <div class="col-md-offset-2 col-md-10">
+                <a class="btn btn-primary" asp-action="NewQuote" asp-route-id="@Model.CapFundingRequest.Id" >Add a vendor quote</a>
             </div>
-        </div> 
+        </div>
     </div>
-    
+
     <div class="form-group">
-        <div class="col-md-offset-2 col-md-10"> 
+        <div class="col-md-offset-2 col-md-10">
             <br />
-            <a class="btn btn-primary" asp-action="QuotesForm" asp-route-id="@Model.CapFundingRequest.Id">Next</a> 
+            <a class="btn btn-primary" asp-action="QuotesForm" asp-route-id="@Model.CapFundingRequest.Id">Next</a>
         </div>
     </div>
  </form>

@@ -225,8 +225,6 @@ namespace AppPortal.Controllers
                 }
                 //now that we have a valid asset lets populate the
                 //remaining items of the funding request object
-                objFundingRequest.AssetYear = assetDetail.fa_model_year;
-                objFundingRequest.Make = assetDetail.fm_manuf_code;
                 objFundingRequest.Serial = assetDetail.fa_serial_number;
                 objFundingRequest.AssetDesc = assetDetail.a_asset_desc;
             }
@@ -262,8 +260,6 @@ namespace AppPortal.Controllers
                 requestInDb.OneTimePurchase = objFundingRequest.OneTimePurchase;
                 requestInDb.RecurringNeed = objFundingRequest.RecurringNeed;
                 requestInDb.ReplaceAsset = objFundingRequest.ReplaceAsset;
-                requestInDb.AssetYear = objFundingRequest.AssetYear;
-                requestInDb.Make = objFundingRequest.Make;
                 requestInDb.AssetNum = objFundingRequest.AssetNum;
                 requestInDb.Serial = objFundingRequest.Serial;
                 requestInDb.AssetDesc = objFundingRequest.AssetDesc;
