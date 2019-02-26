@@ -7,29 +7,29 @@
 <h3>Funding Request</h3>
 
 <hr />
-<form asp-action="FileUpload" method="post" enctype="multipart/form-data" class="form-horizontal"> 
- 
+<form asp-action="FileUpload" method="post" enctype="multipart/form-data" class="form-horizontal">
+
     <div class="panel panel-default">
-        <div class="panel-heading">Program Information</div> 
+        <div class="panel-heading">Program Information</div>
         <div class="panel-body">
-            <dl class="dl-horizontal"> 
+            <dl class="dl-horizontal">
                 <dt> @Html.DisplayNameFor(model => model.CapFundingRequest.ProgramNum) </dt>
-                <dd> @Html.DisplayFor(model => model.CapFundingRequest.ProgramNum) </dd> 
+                <dd> @Html.DisplayFor(model => model.CapFundingRequest.ProgramNum) </dd>
                 <dt> @Html.DisplayNameFor(model => model.CapFundingRequest.DivisionName) </dt>
-                <dd> @Html.DisplayFor(model => model.CapFundingRequest.DivisionName) </dd> 
+                <dd> @Html.DisplayFor(model => model.CapFundingRequest.DivisionName) </dd>
                 <dt> @Html.DisplayNameFor(model => model.CapFundingRequest.ProgramName) </dt>
-                <dd> @Html.DisplayFor(model => model.CapFundingRequest.ProgramName) </dd> 
+                <dd> @Html.DisplayFor(model => model.CapFundingRequest.ProgramName) </dd>
                 <dt> @Html.DisplayNameFor(model => model.CapFundingRequest.DivLead) </dt>
-                <dd> @Html.DisplayFor(model => model.CapFundingRequest.DivLead) </dd> 
+                <dd> @Html.DisplayFor(model => model.CapFundingRequest.DivLead) </dd>
                 <dt> @Html.DisplayNameFor(model => model.CapFundingRequest.Initiator) </dt>
                 <dd> @Html.DisplayFor(model => model.CapFundingRequest.Initiator) </dd>
-            </dl> 
-        </div> 
+            </dl>
+        </div>
     </div>
 
     <div class="panel panel-default">
-        <div class="panel-heading">Optional Attachments</div> 
-        <div class="panel-body"> 
+        <div class="panel-heading">Optional Attachments</div>
+        <div class="panel-body">
             @if (!Model.FundingRequestAttachments.Any())
             {
                 <p>No attachments submitted!</p>
@@ -56,16 +56,16 @@
                         </tr>
                         }
                     </tbody>
-                </table> 
-            } 
-        </div> 
+                </table>
+            }
+        </div>
     </div>
-   
+
     <input asp-for="CapFundingRequest.Id" hidden="hidden" />
     <input asp-for="CapFundingRequest.ProjectName" hidden="hidden" />
 
     <div class="panel panel-default">
-        <div class="panel-heading">File Uploads</div> 
+        <div class="panel-heading">File Uploads</div>
         <div class="panel-body">
             <div class="form-group">
                 <div class="col-md-3">
@@ -73,19 +73,19 @@
                     <input type="file" name="files" multiple />
                     <br />
                 </div>
-            </div> 
+            </div>
             <div class="form-group">
                 <div class="col-md-10">
                     <input class="btn btn-primary" type="submit" value="Upload" />
                 </div>
             </div>
-            <div class="form-group"> 
-                <div class="col-md-10"> 
-                    <a asp-action="Details" asp-route-id="@Model.CapFundingRequest.Id">Return To Request Form</a> 
+            <div class="form-group">
+                <div class="col-md-10">
+                    <a asp-action="Details" asp-route-id="@Model.CapFundingRequest.Id">Return To Request Form</a>
                 </div>
             </div>
-        </div> 
-    </div> 
+        </div>
+    </div>
 
 
 </form>

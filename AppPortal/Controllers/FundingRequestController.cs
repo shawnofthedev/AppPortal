@@ -28,8 +28,6 @@ namespace AppPortal.Controllers
         //**************************************************************************
         //End context
         //**************************************************************************
-
-
         public IActionResult Index()
         {
             string userName = User.Identity.Name.Remove(0, 5) + "@nc-cherokee.com";
@@ -40,7 +38,6 @@ namespace AppPortal.Controllers
                 .OrderBy(r => r.TimeStamp).ToList();
             return View(requestList);
         }
-
         //**************************************************************************
         //New Actions
         //**************************************************************************
@@ -153,6 +150,25 @@ namespace AppPortal.Controllers
             object viewModel = await CreateViewModel(objFundingRequest);
 
             return View("FundingRequestReview", viewModel);
+        }
+
+        public async Task<IActionResult> QuoteDetails(int id)
+        {
+            AttachedQuote quote = await _context.AttachedQuote.SingleOrDefaultAsync(q => q.Id == id);
+            CapFundingRequest request = await _context.CapFundingRequests.SingleOrDefaultAsync(r => r.Id == quote.CapFundingRequestId);
+            if (quote == null)
+                return NotFound();
+            else
+            {
+                var viewModel = new FundingRequestViewModel
+                {
+                    CapFundingRequest = request,
+                    AttachedQuote = quote,
+                    QuoteAttachments = await _context.QuoteAttachments.Where(a => a.AttachedQuoteId == quote.Id).ToListAsync(),
+                };
+                return View(viewModel);
+            }
+
         }
 
         public async Task<IActionResult> EditQuote(int id)

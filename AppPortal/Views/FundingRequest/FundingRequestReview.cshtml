@@ -75,6 +75,9 @@
                     <dd> @Html.DisplayFor(model => model.CapFundingRequest.AssetDesc) </dd>
                 }
             </dl>
+            <div class="col-md-offset-2 col-md-10">
+                <a class="btn btn-primary" asp-action="Edit" asp-route-id="@Model.CapFundingRequest.Id">Edit</a>
+            </div>
         </div>
     </div>
 
@@ -106,7 +109,7 @@
                     @foreach (var files in Model.FundingRequestAttachments)
                     {
                         <dd>
-                            <a asp-action="GetFile" asp-route-id="@files.Id">@Html.DisplayFor(Model => files.FileName)</a>
+                            <a asp-action="GetFile" asp-route-id="@files.Id" target="_blank">@Html.DisplayFor(Model => files.FileName)</a>
                         </dd>
                     }
                 }
@@ -187,7 +190,7 @@
                     @foreach (var item in Model.AttachedQuotes)
                     {
                         <tr>
-                            <td> @Html.DisplayFor(modelItem => item.VendorName) </td>
+                            <td> @Html.ActionLink(item.VendorName, "QuoteDetails", "FundingRequest", new { id = item.Id}, null) </td>
                             <td> @Html.DisplayFor(modelItem => item.ContactNum) </td>
                             <td> @Html.DisplayFor(modelItem => item.ContactName) </td>
                             <td> @Html.DisplayFor(modelItem => item.QuoteAmt) </td>

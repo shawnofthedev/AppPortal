@@ -27,6 +27,21 @@ namespace AppPortal.Models.Finance
 
         public int AnalystId { get; set; }
     }
+    public class Manager
+    {
+        public int Id { get; set; }
+
+        [Display(Name = "Manager Name")]
+        public string ManagerName { get; set; }
+
+        [Display(Name = "Manager Email")]
+        public string ManagerEmail { get; set; }
+
+        [Display(Name = "Program")]
+        public OrgChart OrgChart { get; set; }
+
+        public int OrgChartId { get; set; }
+    }
 
     public class Division
     {
