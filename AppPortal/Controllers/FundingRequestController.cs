@@ -151,6 +151,13 @@ namespace AppPortal.Controllers
             return View("FundingRequestReview", viewModel);
         }
 
+        public async Task<IActionResult> CostDetail(int id)
+        {
+            StaggeredCost cost = await _context.StaggeredCosts.SingleOrDefaultAsync(c => c.Id == id);
+            var debugVar = cost.CapfundingRequestId;
+            return View(cost);
+        }
+
         public async Task<IActionResult> QuoteDetails(int id)
         {
             AttachedQuote quote = await _context.AttachedQuote.SingleOrDefaultAsync(q => q.Id == id);

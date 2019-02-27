@@ -9,9 +9,6 @@
 
 <hr />
 
-@*<h4 style="color:red">@TempData["ErrorMessage"]</h4>
-<h4 style="color:green">@ViewData["Success"]</h4>*@
-
 <form asp-action="Quotes" method="post" class="form-horizontal">
 
     <div class="panel panel-default">
@@ -145,7 +142,7 @@
                 @foreach (var item in Model.StaggeredCosts)
                 {
                     <tr>
-                        <td> @Html.DisplayFor(modelItem => item.FiscalYear) </td>
+                        <td> @Html.ActionLink(item.FiscalYear.ToString(), "CostDetail", "FundingRequest", new { id = item.Id}, null) </td>
                         <td> @Html.DisplayFor(modelItem => item.Amount) </td>
                         <td> @Html.DisplayFor(modelItem => item.AmtJustification) </td>
                         <td> @Html.DisplayFor(modelItem => item.DescOfActivity) </td>
