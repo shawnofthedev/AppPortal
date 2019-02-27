@@ -18,10 +18,10 @@ else
     <table class="table">
         <thead>
             <tr>
+                <th> @Html.DisplayNameFor(model => model.ProjectName) </th>
                 <th> @Html.DisplayNameFor(model => model.DivisionName) </th>
                 <th> @Html.DisplayNameFor(model => model.ProgramName) </th>
                 <th> @Html.DisplayNameFor(model => model.DivLead) </th>
-                <th> @Html.DisplayNameFor(model => model.ProjectName) </th>
                 <th> @Html.DisplayNameFor(model => model.TotalCost) </th>
                 <th> @Html.DisplayNameFor(model => model.RequestStatus)</th>
                 <th></th>
@@ -30,19 +30,18 @@ else
         <tbody>
         @foreach (var item in Model) {
             <tr>
+                <td> @Html.ActionLink(item.ProjectName, "Details", "FundingRequest", new { id = item.Id}, null) </td>
                 <td> @Html.DisplayFor(modelItem => item.DivisionName) </td>
                 <td> @Html.DisplayFor(modelItem => item.ProgramName) </td>
                 <td> @Html.DisplayFor(modelItem => item.DivLead) </td>
-                <td> @Html.DisplayFor(modelItem => item.ProjectName) </td>
                 <td> @Html.DisplayFor(modelItem => item.TotalCost) </td>
                 <td> @Html.DisplayFor(modelItem => item.RequestStatus) </td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
                     <a asp-action="Withdraw" asp-route-id="@item.Id">Withdraw</a>
                 </td>
             </tr>
         }
         </tbody>
-    </table> 
+    </table>
 }

@@ -84,12 +84,6 @@
             </dl>
 
             <div class="form-group">
-                <label class="control-label col-md-2">Id used for development purposes</label>
-                <div class="col-md-2">
-                    <input asp-for="AttachedQuote.Id" class="form-control" readonly="readonly" />
-                </div>
-            </div>
-            <div class="form-group">
                 <div class="col-md-3">
                     <p><strong>Upload All supporting pdf files:</strong></p>
                     <p><strong>Warning: Attached files will overwrite all previously attached files.</strong></p>
@@ -106,6 +100,7 @@
     </div>
 
     <input type="hidden" asp-for="AttachedQuote.CapFundingRequestId" />
+    <input type="hidden" asp-for="AttachedQuote.Id" />
     <input type="hidden" asp-for="CapFundingRequest.Id" />
     <input type="hidden" asp-for="CapFundingRequest.ProjectName" />
 

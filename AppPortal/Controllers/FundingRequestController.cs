@@ -31,7 +31,6 @@ namespace AppPortal.Controllers
         public IActionResult Index()
         {
             string userName = User.Identity.Name.Remove(0, 5) + "@nc-cherokee.com";
-            //Todo **Filter list down to not show withdrawn requests
             List<CapFundingRequest> requestList = _context.CapFundingRequests
                 .Where(r => r.Initiator == userName)
                 .Where(r => r.RequestStatus != "Withdrawn")
@@ -283,9 +282,7 @@ namespace AppPortal.Controllers
             }
 
             await _context.SaveChangesAsync();
-
             object viewModel = await CreateViewModel(objFundingRequest);
-
             return View("FundingRequestReview", viewModel);
         }
 
@@ -301,8 +298,6 @@ namespace AppPortal.Controllers
                     TempData["ErrorMessage"] = "Files must be in pdf format.";
                     return RedirectToAction(nameof(FundingRequestForm));
                 }
-
-                //todo Verify the file doesnt already exist and handle it accordingly
             }
 
             //build path to pdf folder
@@ -333,12 +328,10 @@ namespace AppPortal.Controllers
                     await _context.FundingRequestAttachments.AddAsync(attachments);
                 }
             }
+
             await _context.SaveChangesAsync();
-
             CapFundingRequest objRequest = await _context.CapFundingRequests.SingleOrDefaultAsync(r => r.Id == requestId);
-
             object viewModel = await CreateViewModel(objRequest);
-
             return View("FundingRequestReview", viewModel);
         }
 
@@ -374,6 +367,7 @@ namespace AppPortal.Controllers
         public async Task<IActionResult> SaveQuote(FundingRequestViewModel request, List<IFormFile> files)
         {
             int requestId = request.CapFundingRequest.Id;
+            AttachedQuote objAttachedQuote = request.AttachedQuote;
             //Check if there is a file and if its in the right format
             if (files.Count > 0)
             {
@@ -389,7 +383,6 @@ namespace AppPortal.Controllers
             }
 
             //write to the database now that we know
-            AttachedQuote objAttachedQuote = request.AttachedQuote;
             if (objAttachedQuote.Id == 0)
             {
                 objAttachedQuote.CapFundingRequestId = request.CapFundingRequest.Id;
@@ -406,15 +399,20 @@ namespace AppPortal.Controllers
                     Directory.CreateDirectory(dir); //this only happens when the directory doesnt exist
                     foreach (IFormFile formFile in files)
                     {
-                        QuoteAttachments quoteAttachment = new QuoteAttachments
+                        string fileName = Path.GetFileName(formFile.FileName);
+                        string filePath = Path.Combine(dir, fileName);
+
+                        using (FileStream stream = new FileStream(filePath, FileMode.Create))
                         {
-                            FileName = formFile.FileName,
-                            FileLocation = Path.Combine(dir, formFile.FileName),
-                            AttachedQuoteId = quoteId,
-                        };
-                        QuoteAttachments showMeTheQuoteAttachment = quoteAttachment;
-                        await _context.QuoteAttachments.AddAsync(quoteAttachment);
-                        UploadQuote(formFile, dir);
+                            await formFile.CopyToAsync(stream);
+                            QuoteAttachments quoteAttachment = new QuoteAttachments
+                            {
+                                FileName = formFile.FileName,
+                                FileLocation = Path.Combine(dir, formFile.FileName),
+                                AttachedQuoteId = quoteId,
+                            };
+                            await _context.QuoteAttachments.AddAsync(quoteAttachment);
+                        }
                     }
                 }
             }
@@ -430,7 +428,8 @@ namespace AppPortal.Controllers
 
                 if (files.Count > 0)
                 {
-                    List<QuoteAttachments> attachmentInDb = await _context.QuoteAttachments.Where(a => a.AttachedQuoteId == quoteInDb.Id).ToListAsync();
+                    List<QuoteAttachments> attachmentInDb = await _context.QuoteAttachments
+                        .Where(a => a.AttachedQuoteId == quoteInDb.Id).ToListAsync();
                     //first we will loop through the attachments and delete them
                     foreach (var attachment in attachmentInDb)
                     {
@@ -447,19 +446,23 @@ namespace AppPortal.Controllers
                     Directory.CreateDirectory(dir); //this only happens when the directory doesnt exist
                     foreach (IFormFile formFile in files)
                     {
-                        QuoteAttachments quoteAttachment = new QuoteAttachments
+                        string fileName = Path.Combine(formFile.FileName);
+                        string filePath = Path.Combine(dir, fileName);
+
+                        using (FileStream stream = new FileStream(filePath, FileMode.Create))
                         {
-                            FileName = formFile.FileName,
-                            FileLocation = Path.Combine(dir, formFile.FileName),
-                            AttachedQuoteId = quoteInDb.Id,
-                        };
-                        QuoteAttachments showMeTheQuoteAttachment = quoteAttachment;
-                        await _context.QuoteAttachments.AddAsync(quoteAttachment);
-                        UploadQuote(formFile, dir);
+                            await formFile.CopyToAsync(stream);
+                            QuoteAttachments quoteAttachment = new QuoteAttachments
+                            {
+                                FileName = formFile.FileName,
+                                FileLocation = Path.Combine(dir, formFile.FileName),
+                                AttachedQuoteId = quoteInDb.Id,
+                            };
+                            await _context.QuoteAttachments.AddAsync(quoteAttachment);
+                        }
                     }
                 }
             }
-
             await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Details), new { request.CapFundingRequest.Id });
@@ -663,11 +666,17 @@ namespace AppPortal.Controllers
         }
 
 
-        //display pdf file in browser
-        public IActionResult GetFile(int id)
+        //display attached files in browser
+        public IActionResult GetFile(int? id)
         {
-            FundingRequestAttachments file = _context.FundingRequestAttachments.Single(f => f.Id == id);
+            FundingRequestAttachments file = _context.FundingRequestAttachments.SingleOrDefault(f => f.Id == id);
             return new PhysicalFileResult(file.FileLocation, "Application/pdf");
+        }
+        public async Task<IActionResult> GetQuoteAtt(int? id)
+        {
+            var att = await _context.QuoteAttachments.SingleOrDefaultAsync(a => a.Id == id);
+            var debugVar = att.FileLocation;
+            return new PhysicalFileResult(att.FileLocation, "Application/pdf");
         }
         //**************************************************************************
         //File Upload helper funcion
