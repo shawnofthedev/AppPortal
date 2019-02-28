@@ -19,10 +19,12 @@ namespace AppPortal.Models
         public virtual DbSet<StaggeredCost> StaggeredCosts { get; set; }
         public virtual DbSet<AttachedQuote> AttachedQuote { get; set; }
         public virtual DbSet<QuoteAttachments> QuoteAttachments { get; set; }
-        public virtual DbSet<Approval> Approval { get; set; }
+        public virtual DbSet<ManagerApproval> Approval { get; set; }
+        public virtual DbSet<SecretaryApproval> SecretaryApproval { get; set; }
+        public virtual DbSet<AnalystApproval> AnalystApproval { get; set; }
+        public virtual DbSet<FleetApproval> FleetApproval { get; set; }
+        public virtual DbSet<FinalApproval> FinalApproval { get; set; }
 
-        //public DbSet<MunisVw_EmployeeMaster> MunisVw_EmployeeMaster { get; set; }
-        //public DbSet<MunisVw_EmployeeAnnual> MunisVw_EmployeeAnnual { get; set; }
         public DbSet<Vw_DivisionMaster> Vw_DivisionMaster { get; set; }
         public DbSet<MunisVw_fa_master> MunisVw_Fa_Master { get; set; }
 

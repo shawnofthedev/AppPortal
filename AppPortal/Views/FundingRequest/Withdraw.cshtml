@@ -4,10 +4,10 @@
     ViewData["Title"] = "Delete";
 }
 
-<h2>Withdraw Request</h2>
+<h3>Withdraw Request</h3>
 
-<h3>Are you sure you want to withdraw this?</h3>
-<h3>This action cannot be undone!</h3>
+<h4>Are you sure you want to withdraw this?</h4>
+<h4>This action cannot be undone!</h4>
 <div>
     <hr />
     <dl class="dl-horizontal">
@@ -20,10 +20,10 @@
         <dt> @Html.DisplayNameFor(model => model.TotalCost) </dt>
         <dd> @Html.DisplayFor(model => model.TotalCost) </dd>
     </dl>
-    
+
     <form asp-action="Delete">
         <input type="hidden" asp-for="Id" />
-        <input type="submit" value="Withdraw" class="btn btn-primary" />        
+        <input type="submit" value="Withdraw" class="btn btn-primary" />
         <br />
         <a asp-action="Index">Back to List</a>
     </form>

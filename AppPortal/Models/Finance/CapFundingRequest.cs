@@ -78,6 +78,8 @@ namespace AppPortal.Models
         [Display(Name="Status")]
         public string RequestStatus { get; set; }
 
+        public string AssignedTo { get; set; }
+
         public IEnumerable<FundingRequestAttachments> FundingRequestAttachments { get; set; }
 
         public IEnumerable<StaggeredCost> StaggeredCosts { get; set; }

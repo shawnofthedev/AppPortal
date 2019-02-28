@@ -32,7 +32,7 @@ namespace AppPortal.Controllers
         {
             string userName = User.Identity.Name.Remove(0, 5) + "@nc-cherokee.com";
             List<CapFundingRequest> requestList = _context.CapFundingRequests
-                .Where(r => r.Initiator == userName)
+                .Where(r => r.AssignedTo == userName)
                 .Where(r => r.RequestStatus != "Withdrawn")
                 .OrderBy(r => r.TimeStamp).ToList();
             return View(requestList);
@@ -257,6 +257,7 @@ namespace AppPortal.Controllers
 
                 //add together the funding amounts for a total
                 objFundingRequest.TotalCost = objFundingRequest.AmtRequest + objFundingRequest.AmtOtherSource;
+                objFundingRequest.AssignedTo = User.Identity.Name.Remove(0, 5) + "@nc-cherokee.com";
                 objFundingRequest.RequestStatus = "In Progress";
 
                 await _context.CapFundingRequests.AddAsync(objFundingRequest);
@@ -286,6 +287,7 @@ namespace AppPortal.Controllers
                 requestInDb.Serial = objFundingRequest.Serial;
                 requestInDb.AssetDesc = objFundingRequest.AssetDesc;
                 requestInDb.RequestStatus = "In Progress";
+                requestInDb.AssignedTo = User.Identity.Name.Remove(0, 5) + "@nc-cherokee.com";
             }
 
             await _context.SaveChangesAsync();
