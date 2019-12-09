@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
+//Created from database views because we cannot connect to ERP data any other way
+//Maybe one day they will support Restful API 
+
 namespace AppPortal.Models
 {
     public class Vw_DivisionMaster

@@ -25,6 +25,7 @@ namespace AppPortal.Models
         public virtual DbSet<FleetApproval> FleetApproval { get; set; }
         public virtual DbSet<FinalApproval> FinalApproval { get; set; }
 
+        //These Db sets are from read only views to be used for validation from ERP system
         public DbSet<Vw_DivisionMaster> Vw_DivisionMaster { get; set; }
         public DbSet<MunisVw_fa_master> MunisVw_Fa_Master { get; set; }
 

@@ -60,6 +60,7 @@ namespace AppPortal
             app.UseStaticFiles();
             app.UseStaticFiles(new StaticFileOptions
             {
+                //path to file storage location
                 FileProvider = new PhysicalFileProvider(
                     Path.Combine("E:\\ApplicationDocuments\\FundingRequests\\")),
             });

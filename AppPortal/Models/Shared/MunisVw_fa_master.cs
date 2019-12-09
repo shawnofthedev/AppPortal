@@ -4,6 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 
+//Created from database views because we cannot connect to ERP data any other way
+//Maybe one day they will support Restful API 
+
 namespace AppPortal.Models
 {
     public class MunisVw_fa_master

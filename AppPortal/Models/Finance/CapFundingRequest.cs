@@ -42,6 +42,8 @@ namespace AppPortal.Models
         [Display(Name = "Project Overview")]
         public string ProjectOverview { get; set; }
 
+        //TODO: Uncomment when ready to change data type to currency
+        //there will come a time.
         [Display(Name = "Total Requested Amount")]
         //[DataType(DataType.Currency)]
         public decimal AmtRequest { get; set; }

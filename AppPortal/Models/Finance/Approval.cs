@@ -1,4 +1,6 @@
-﻿using System;
+﻿//YOLO
+//probably breaking convention by putting all these classes in the same file.
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace AppPortal.Models.Finance
